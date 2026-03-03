@@ -1,9 +1,16 @@
+import { Suspense } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router";
+import { Routes } from "@/routes/routes";
+import { Loading } from "@/components/Loading";
+
+const router = createBrowserRouter(Routes);
+
 export function App() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="font-medium">Hello World</div>
-    </div>
-  )
+    <Suspense fallback={<Loading />}>
+      <RouterProvider router={router} />
+    </Suspense>
+  );
 }
 
-export default App
+export default App;
