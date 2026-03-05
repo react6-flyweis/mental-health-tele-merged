@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePageTitle } from "@/store/pageTitleStore";
 import { Clock3, MessageSquare, Video } from "lucide-react";
+import { NavLink } from "react-router";
 
 const WAITING_PATIENTS = [
   {
@@ -73,9 +74,14 @@ export default function VideoSessionsPage() {
                 </div>
               </div>
 
-              <Button className="bg-gradient-dash text-white hover:opacity-95">
-                <Video className="size-4" />
-                Start Session
+              <Button
+                asChild
+                className="bg-gradient-dash text-white hover:opacity-95"
+              >
+                <NavLink to="/dashboard/video-sessions/live">
+                  <Video className="size-4" />
+                  Start Session
+                </NavLink>
               </Button>
             </div>
           ))}
