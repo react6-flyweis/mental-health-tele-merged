@@ -57,7 +57,11 @@ export default function DashSidebar() {
             <SidebarMenu className="space-y-1">
               {SIDEBAR_MENU.map(({ href, icon: Icon, label }) => (
                 <SidebarMenuItem key={href}>
-                  <NavLink to={href} end>
+                  <NavLink
+                    to={href}
+                    end={href === "/dashboard"}
+                    className="w-full"
+                  >
                     {({ isActive }) => (
                       <SidebarMenuButton
                         className={cn(
