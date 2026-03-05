@@ -12,6 +12,9 @@ const ProviderLoginPage = lazy(() => import("@/page/ProviderLoginPage"));
 const DashboardPage = lazy(() => import("@/page/DashboardPage"));
 const AppointmentsPage = lazy(() => import("@/page/AppointmentsPage"));
 const VideoSessionsPage = lazy(() => import("@/page/VideoSessionsPage"));
+const SingleVideoSessionPage = lazy(
+  () => import("@/page/SingleVideoSessionPage"),
+);
 const PatientRecordsPage = lazy(() => import("@/page/PatientRecordsPage"));
 
 export const Routes: RouteObject[] = [
@@ -30,6 +33,7 @@ export const Routes: RouteObject[] = [
       { index: true, element: <DashboardPage /> },
       { path: "appointments", element: <AppointmentsPage /> },
       { path: "video-sessions", element: <VideoSessionsPage /> },
+      { path: "video-sessions/live", element: <SingleVideoSessionPage /> },
       { path: "patient-records", element: <PatientRecordsPage /> },
       // catch-all within dashboard
       { path: "*", element: <NotFound /> },
