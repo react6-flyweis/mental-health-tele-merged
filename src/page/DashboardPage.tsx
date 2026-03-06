@@ -9,8 +9,7 @@ import {
   DollarSign,
   Video,
 } from "lucide-react";
-import { useNavigate } from "react-router";
-
+import { Link } from "react-router";
 const STATS = [
   {
     label: "Today's Appointments",
@@ -66,7 +65,7 @@ const EARNINGS = {
 };
 
 export default function DashboardPage() {
-  const navigate = useNavigate();
+  const websiteURL = import.meta.env.VITE_MAIN_WEBSITE_URL;
 
   return (
     <div className="space-y-5">
@@ -80,13 +79,12 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <Button
-          onClick={() => navigate("/")}
-          className="bg-gradient-dash text-white hover:opacity-95"
-        >
-          <ArrowLeft className="size-4" />
-          Back To website
-        </Button>
+        <Link to={websiteURL}>
+          <Button className="bg-gradient-dash text-white hover:opacity-95">
+            <ArrowLeft className="size-4" />
+            Back To website
+          </Button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
