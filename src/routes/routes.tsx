@@ -20,6 +20,8 @@ const PrescriptionsPage = lazy(() => import("@/page/PrescriptionsPage"));
 const EarningsPage = lazy(() => import("@/page/EarningsPage"));
 const AvailabilityPage = lazy(() => import("@/page/AvailabilityPage"));
 const MessagesPage = lazy(() => import("@/page/MessagesPage"));
+const ProfilePage = lazy(() => import("@/page/ProfilePage"));
+const SettingsPage = lazy(() => import("@/page/SettingsPage"));
 
 export const Routes: RouteObject[] = [
   {
@@ -43,6 +45,8 @@ export const Routes: RouteObject[] = [
       { path: "earnings", element: <EarningsPage /> },
       { path: "availability", element: <AvailabilityPage /> },
       { path: "messages", element: <MessagesPage /> },
+      { path: "profile", element: <ProfilePage /> },
+      { path: "settings", element: <SettingsPage /> },
       // catch-all within dashboard
       { path: "*", element: <NotFound /> },
     ],
