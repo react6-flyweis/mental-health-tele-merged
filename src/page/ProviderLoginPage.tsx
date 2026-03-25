@@ -17,7 +17,7 @@ export default function ProviderLoginPage() {
         >
           <img src={Logo} alt="Logo" className="h-[50px]" />
         </div>
-        <LoginCard role="Provider" onSubmitPath="/dashboard" />
+        <LoginCard role="Provider" onSubmitPath="/dashboard" useApi />
       </div>
     </div>
   );
