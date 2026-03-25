@@ -3,7 +3,9 @@ import type { RouteObject } from "react-router";
 
 import AuthLayout from "@/components/layout/AuthLayout";
 import DashLayout from "@/components/layout/DashLayout";
-import NavigateToMain from "@/components/NavigateToMain";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import PublicRoute from "@/components/auth/PublicRoute";
+// import NavigateToMain from "@/components/NavigateToMain";
 import { NotFound } from "@/page/NotFound";
 
 // lazily load page components
@@ -25,35 +27,46 @@ const ProfilePage = lazy(() => import("@/page/ProfilePage"));
 const SettingsPage = lazy(() => import("@/page/SettingsPage"));
 
 export const Routes: RouteObject[] = [
+  // {
+  //   path: "/",
+  //   // element: <NavigateToMain />,
+  // },
   {
-    path: "/",
-    element: <NavigateToMain />,
-  },
-  {
-    element: <AuthLayout />, // default path is "/"
+    element: <PublicRoute />,
     children: [
-      { path: "/signin", element: <SignupRolePage /> },
-      { path: "patient-login", element: <PatientLoginPage /> },
-      { path: "provider-login", element: <ProviderLoginPage /> },
+      {
+        element: <AuthLayout />, // default path is "/"
+        children: [
+          { path: "/", element: <SignupRolePage /> },
+          // { path: "/signin", element: <SignupRolePage /> },
+          { path: "patient-login", element: <PatientLoginPage /> },
+          { path: "provider-login", element: <ProviderLoginPage /> },
+        ],
+      },
     ],
   },
   {
-    path: "dashboard",
-    element: <DashLayout />,
+    element: <ProtectedRoute />,
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: "appointments", element: <AppointmentsPage /> },
-      { path: "video-sessions", element: <VideoSessionsPage /> },
-      { path: "video-sessions/live", element: <SingleVideoSessionPage /> },
-      { path: "patient-records", element: <PatientRecordsPage /> },
-      { path: "prescriptions", element: <PrescriptionsPage /> },
-      { path: "earnings", element: <EarningsPage /> },
-      { path: "availability", element: <AvailabilityPage /> },
-      { path: "messages", element: <MessagesPage /> },
-      { path: "profile", element: <ProfilePage /> },
-      { path: "settings", element: <SettingsPage /> },
-      // catch-all within dashboard
-      { path: "*", element: <NotFound /> },
+      {
+        path: "dashboard",
+        element: <DashLayout />,
+        children: [
+          { index: true, element: <DashboardPage /> },
+          { path: "appointments", element: <AppointmentsPage /> },
+          { path: "video-sessions", element: <VideoSessionsPage /> },
+          { path: "video-sessions/live", element: <SingleVideoSessionPage /> },
+          { path: "patient-records", element: <PatientRecordsPage /> },
+          { path: "prescriptions", element: <PrescriptionsPage /> },
+          { path: "earnings", element: <EarningsPage /> },
+          { path: "availability", element: <AvailabilityPage /> },
+          { path: "messages", element: <MessagesPage /> },
+          { path: "profile", element: <ProfilePage /> },
+          { path: "settings", element: <SettingsPage /> },
+          // catch-all within dashboard
+          { path: "*", element: <NotFound /> },
+        ],
+      },
     ],
   },
   // global 404 (optional)
