@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 
 export interface Appointment {
-  id: number;
+  id: string;
   patientId?: string;
   name: string;
   initials: string;
@@ -34,11 +34,19 @@ const statusColorMap: Record<Appointment["status"], string> = {
 interface AppointmentTableProps {
   data: Appointment[];
   onDetails?: (appt: Appointment) => void;
+  onConfirm?: (appointmentId: string) => void;
+  onReject?: (appointmentId: string) => void;
+  onComplete?: (appointmentId: string) => void;
+  processingAppointmentId?: string | null;
 }
 
 export default function AppointmentTable({
   data,
   onDetails,
+  onConfirm,
+  onReject,
+  onComplete,
+  processingAppointmentId,
 }: AppointmentTableProps) {
   return (
     <ShadTable>
@@ -87,17 +95,32 @@ export default function AppointmentTable({
                       size="icon"
                       className="text-green-500 hover:bg-green-100 bg-green-50"
                       aria-label="confirm appointment"
+                      onClick={() => onConfirm && onConfirm(appt.id)}
+                      disabled={processingAppointmentId === appt.id}
                     >
                       <Check />
                     </Button>
                     <Button
                       size="icon"
                       className="text-red-500 hover:bg-red-100 bg-red-50"
-                      aria-label="cancel appointment"
+                      aria-label="reject appointment"
+                      onClick={() => onReject && onReject(appt.id)}
+                      disabled={processingAppointmentId === appt.id}
                     >
                       <X />
                     </Button>
                   </>
+                )}
+                {appt.status === "confirmed" && (
+                  <Button
+                    size="icon"
+                    className="text-blue-500 hover:bg-blue-100 bg-blue-50"
+                    aria-label="complete appointment"
+                    onClick={() => onComplete && onComplete(appt.id)}
+                    disabled={processingAppointmentId === appt.id}
+                  >
+                    <Check />
+                  </Button>
                 )}
                 <Button
                   size="icon"
