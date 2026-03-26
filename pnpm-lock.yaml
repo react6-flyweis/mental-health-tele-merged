@@ -26,6 +26,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.95.2
         version: 5.95.2(react@19.2.4)
+      agora-rtc-sdk-ng:
+        specifier: ^4.24.3
+        version: 4.24.3
       axios:
         specifier: ^1.13.6
         version: 1.13.6
@@ -110,6 +113,18 @@ importers:
         version: 7.3.1(@types/node@24.11.0)(jiti@2.6.1)(lightningcss@1.31.1)
 
 packages:
+
+  '@agora-js/media@4.24.3':
+    resolution: {integrity: sha512-aC471uaWWGSXnruoaJggi9Ltbp3ldYxMyIi61jOew960zVsHaw78YhTDVv27XX1NvPRqEPLyfyMGEX4av0xOKA==}
+
+  '@agora-js/protocol@4.24.3':
+    resolution: {integrity: sha512-GWAV+J9wv53u5T/k4KAjsxQ9Y+n73bWc3dSBe7OHjWcSZQikcWRJoOtygQiZKWmpYV/ZW5LQ0R12jHI7GAG0cQ==}
+
+  '@agora-js/report@4.24.3':
+    resolution: {integrity: sha512-A2Q13JbRlSYkEF0W6eMCJmnzmHSBzaWZORNnsS23GElwACSxoa2KTMcDp0MQhlsI9Ht6277ZuVSCdkT48A6Pwg==}
+
+  '@agora-js/shared@4.24.3':
+    resolution: {integrity: sha512-PyKelGEuV/g4fTjDjANpBqPZMaY0NFdd0W4UcGtJ2rayVU+YAeztLvu4tpDbm14U4BG5dmz/N+VHckxFPgoIjQ==}
 
   '@antfu/ni@25.0.0':
     resolution: {integrity: sha512-9q/yCljni37pkMr4sPrI3G4jqdIk074+iukc5aFJl7kmDCCsiJrbZ6zKxnES1Gwg+i9RcDZwvktl23puGslmvA==}
@@ -280,6 +295,9 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  '@bufbuild/protobuf@2.11.0':
+    resolution: {integrity: sha512-sBXGT13cpmPR5BMgHE6UEEfEaShh5Ror6rfN3yEK5si7QVrtZg8LEPQb0VVhiLRUslD2yLnXtnRzG035J/mZXQ==}
 
   '@dotenvx/dotenvx@1.52.0':
     resolution: {integrity: sha512-CaQcc8JvtzQhUSm9877b6V4Tb7HCotkcyud9X2YwdqtQKwgljkMRwU96fVYKnzN3V0Hj74oP7Es+vZ0mS+Aa1w==}
@@ -1598,6 +1616,9 @@ packages:
   '@types/node@24.11.0':
     resolution: {integrity: sha512-fPxQqz4VTgPI/IQ+lj9r0h+fDR66bzoeMGHp8ASee+32OSGIkeASsoZuJixsQoVef1QJbeubcPBxKk22QVoWdw==}
 
+  '@types/pako@2.0.4':
+    resolution: {integrity: sha512-VWDCbrLeVXJM9fihYodcLiIv0ku+AlOa/TQ1SvYOaBuyrSKgEcro95LJyIsJ4vSo6BXIxOKxiJAat04CmST9Fw==}
+
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
     peerDependencies:
@@ -1694,6 +1715,12 @@ packages:
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
+
+  agora-rtc-sdk-ng@4.24.3:
+    resolution: {integrity: sha512-DEz0+/jgsajZgWFG/uHijoMeheqr7YWUJ5AyubiqKt5vC1TF0/3v51vVl2aqupY+YkmJOg0q64B4AJcdpj/TBQ==}
+
+  agora-rte-extension@1.2.4:
+    resolution: {integrity: sha512-0ovZz1lbe30QraG1cU+ji7EnQ8aUu+Hf3F+a8xPml3wPOyUQEK6CTdxV9kMecr9t+fIDrGeW7wgJTsM1DQE7Nw==}
 
   ajv-formats@3.0.1:
     resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
@@ -2764,6 +2791,9 @@ packages:
   package-manager-detector@1.6.0:
     resolution: {integrity: sha512-61A5ThoTiDG/C8s8UMZwSorAGwMJ0ERVGj2OjoW5pAalsNOg15+iQiPzrLJ4jhZ1HJzmC2PIHT2oEiH3R5fzNA==}
 
+  pako@2.1.0:
+    resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
+
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
@@ -2990,6 +3020,9 @@ packages:
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
 
+  sdp@3.2.1:
+    resolution: {integrity: sha512-lwsAIzOPlH8/7IIjjz3K0zYBk7aBVVcvjMwt3M4fLxpjMYyy7i3I97SLHebgn4YBjirkzfp3RvRDWSKsh/+WFw==}
+
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
@@ -3200,6 +3233,10 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  ua-parser-js@0.7.41:
+    resolution: {integrity: sha512-O3oYyCMPYgNNHuO7Jjk3uacJWZF8loBgwrfd/5LE/HyZ3lUIOdniQ7DNXJcIgZbwioZxk0fLfI4EVnetdiX5jg==}
+    hasBin: true
+
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
@@ -3307,6 +3344,10 @@ packages:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
 
+  webrtc-adapter@8.2.0:
+    resolution: {integrity: sha512-umxCMgedPAVq4Pe/jl3xmelLXLn4XZWFEMR5Iipb5wJ+k1xMX0yC4ZY9CueZUU1MjapFxai1tFGE7R/kotH6Ww==}
+    engines: {node: '>=6.0.0', npm: '>=3.10.0'}
+
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
@@ -3399,6 +3440,41 @@ packages:
         optional: true
 
 snapshots:
+
+  '@agora-js/media@4.24.3':
+    dependencies:
+      '@agora-js/report': 4.24.3
+      '@agora-js/shared': 4.24.3
+      agora-rte-extension: 1.2.4
+      axios: 1.13.6
+      webrtc-adapter: 8.2.0
+    transitivePeerDependencies:
+      - debug
+
+  '@agora-js/protocol@4.24.3':
+    dependencies:
+      '@agora-js/media': 4.24.3
+      '@agora-js/report': 4.24.3
+      '@agora-js/shared': 4.24.3
+      '@bufbuild/protobuf': 2.11.0
+      '@types/pako': 2.0.4
+      pako: 2.1.0
+    transitivePeerDependencies:
+      - debug
+
+  '@agora-js/report@4.24.3':
+    dependencies:
+      '@agora-js/shared': 4.24.3
+      axios: 1.13.6
+    transitivePeerDependencies:
+      - debug
+
+  '@agora-js/shared@4.24.3':
+    dependencies:
+      axios: 1.13.6
+      ua-parser-js: 0.7.41
+    transitivePeerDependencies:
+      - debug
 
   '@antfu/ni@25.0.0':
     dependencies:
@@ -3628,6 +3704,8 @@ snapshots:
       use-sync-external-store: 1.6.0(react@19.2.4)
     optionalDependencies:
       '@types/react': 19.2.14
+
+  '@bufbuild/protobuf@2.11.0': {}
 
   '@dotenvx/dotenvx@1.52.0':
     dependencies:
@@ -4857,6 +4935,8 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
+  '@types/pako@2.0.4': {}
+
   '@types/react-dom@19.2.3(@types/react@19.2.14)':
     dependencies:
       '@types/react': 19.2.14
@@ -4984,6 +5064,23 @@ snapshots:
   acorn@8.16.0: {}
 
   agent-base@7.1.4: {}
+
+  agora-rtc-sdk-ng@4.24.3:
+    dependencies:
+      '@agora-js/media': 4.24.3
+      '@agora-js/protocol': 4.24.3
+      '@agora-js/report': 4.24.3
+      '@agora-js/shared': 4.24.3
+      agora-rte-extension: 1.2.4
+      axios: 1.13.6
+      formdata-polyfill: 4.0.10
+      pako: 2.1.0
+      ua-parser-js: 0.7.41
+      webrtc-adapter: 8.2.0
+    transitivePeerDependencies:
+      - debug
+
+  agora-rte-extension@1.2.4: {}
 
   ajv-formats@3.0.1(ajv@8.18.0):
     optionalDependencies:
@@ -5990,6 +6087,8 @@ snapshots:
 
   package-manager-detector@1.6.0: {}
 
+  pako@2.1.0: {}
+
   parent-module@1.0.1:
     dependencies:
       callsites: 3.1.0
@@ -6260,6 +6359,8 @@ snapshots:
 
   scheduler@0.27.0: {}
 
+  sdp@3.2.1: {}
+
   semver@6.3.1: {}
 
   semver@7.7.4: {}
@@ -6506,6 +6607,8 @@ snapshots:
 
   typescript@5.9.3: {}
 
+  ua-parser-js@0.7.41: {}
+
   undici-types@7.16.0: {}
 
   unicorn-magic@0.3.0: {}
@@ -6566,6 +6669,10 @@ snapshots:
       lightningcss: 1.31.1
 
   web-streams-polyfill@3.3.3: {}
+
+  webrtc-adapter@8.2.0:
+    dependencies:
+      sdp: 3.2.1
 
   which@2.0.2:
     dependencies:
