@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,13 +19,15 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import UpdatePaymentMethodDialog, {
   type PaymentMethodForm,
 } from "@/components/settings/UpdatePaymentMethodDialog";
 import LogoutDialog from "@/components/settings/LogoutDialog";
+import NotificationPreferencesSection from "@/components/settings/NotificationPreferencesSection";
+import { useUpdatePasswordMutation } from "@/hooks/useNotificationPreferencesMutations";
 import { usePageTitle } from "@/store/pageTitleStore";
-import { Bell, Lock, CreditCard, ShieldAlert, LogOut } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
+import { Lock, CreditCard, ShieldAlert, LogOut } from "lucide-react";
 
 // password form schema
 const passwordSchema = z
@@ -44,15 +47,16 @@ type PasswordForm = z.infer<typeof passwordSchema>;
 
 export default function SettingsPage() {
   usePageTitle("Settings");
+  const navigate = useNavigate();
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const [passwordSuccessMessage, setPasswordSuccessMessage] = useState<
+    string | null
+  >(null);
 
-  const [notifications, setNotifications] = useState({
-    emailAppointments: true,
-    emailMessages: false,
-    pushAppointments: true,
-  });
+  const updatePasswordMutation = useUpdatePasswordMutation();
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodForm>({
     method: "bank",
@@ -80,14 +84,21 @@ export default function SettingsPage() {
     },
   });
 
-  function handleToggle(key: keyof typeof notifications) {
-    setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
-  }
-
   function onPasswordSubmit(data: PasswordForm) {
-    void data;
-    // TODO: wire up with backend when available
-    reset();
+    setPasswordSuccessMessage(null);
+
+    updatePasswordMutation.mutate(
+      {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      },
+      {
+        onSuccess: (response) => {
+          setPasswordSuccessMessage(response.message);
+          reset();
+        },
+      },
+    );
   }
 
   function maskLast4(value?: string) {
@@ -105,43 +116,7 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-8">
-      {/* notifications card */}
-      <Card>
-        <CardHeader className="border-b flex gap-2">
-          <div className="bg-gradient-dash rounded-md size-10 text-white flex items-center justify-center">
-            <Bell className="size-5" />
-          </div>
-          <div className="">
-            <CardTitle>Notifications</CardTitle>
-            <CardDescription>
-              Manage how you receive notifications
-            </CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span>Email - Appointments</span>
-            <Switch
-              checked={notifications.emailAppointments}
-              onCheckedChange={() => handleToggle("emailAppointments")}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <span>Email - Messages</span>
-            <Switch
-              checked={notifications.emailMessages}
-              onCheckedChange={() => handleToggle("emailMessages")}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <span>Push - Appointments</span>
-            <Switch
-              checked={notifications.pushAppointments}
-              onCheckedChange={() => handleToggle("pushAppointments")}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <NotificationPreferencesSection />
 
       {/* password/security card */}
       <Card>
@@ -155,6 +130,20 @@ export default function SettingsPage() {
           </div>
         </CardHeader>
         <CardContent>
+          {updatePasswordMutation.isError ? (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {updatePasswordMutation.error instanceof Error
+                ? updatePasswordMutation.error.message
+                : "Unable to update password."}
+            </div>
+          ) : null}
+
+          {passwordSuccessMessage ? (
+            <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+              {passwordSuccessMessage}
+            </div>
+          ) : null}
+
           <form className="space-y-5" onSubmit={handleSubmit(onPasswordSubmit)}>
             <Field>
               <FieldLabel>Current Password</FieldLabel>
@@ -162,6 +151,7 @@ export default function SettingsPage() {
                 <Input
                   type="password"
                   className="h-10"
+                  disabled={updatePasswordMutation.isPending}
                   {...register("currentPassword")}
                 />
               </FieldContent>
@@ -176,6 +166,7 @@ export default function SettingsPage() {
                 <Input
                   type="password"
                   className="h-10"
+                  disabled={updatePasswordMutation.isPending}
                   {...register("newPassword")}
                 />
               </FieldContent>
@@ -190,6 +181,7 @@ export default function SettingsPage() {
                 <Input
                   type="password"
                   className="h-10"
+                  disabled={updatePasswordMutation.isPending}
                   {...register("confirmPassword")}
                 />
               </FieldContent>
@@ -198,8 +190,14 @@ export default function SettingsPage() {
               />
             </Field>
 
-            <Button type="submit" className="mt-2 bg-gradient-dash">
-              Update Password
+            <Button
+              type="submit"
+              className="mt-2 bg-gradient-dash"
+              disabled={updatePasswordMutation.isPending}
+            >
+              {updatePasswordMutation.isPending
+                ? "Updating..."
+                : "Update Password"}
             </Button>
           </form>
         </CardContent>
@@ -292,9 +290,9 @@ export default function SettingsPage() {
         open={isLogoutDialogOpen}
         onOpenChange={setIsLogoutDialogOpen}
         onConfirm={() => {
-          // TODO: wire up real logout logic
-          console.log("user confirmed logout");
+          clearAuth();
           setIsLogoutDialogOpen(false);
+          navigate("/provider-login", { replace: true });
         }}
       />
     </div>
