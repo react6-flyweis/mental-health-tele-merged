@@ -1,7 +1,17 @@
 import * as React from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getProviderPatients } from "@/api/patients";
+import { createProviderPrescription } from "@/api/prescriptions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +22,8 @@ import {
 } from "@/components/ui/dialog";
 
 export interface NewPrescriptionData {
-  patient: string;
+  patientId: string;
+  patientName: string;
   medication: string;
   dosage: string;
   frequency: string;
@@ -23,16 +34,40 @@ export interface NewPrescriptionData {
 interface NewPrescriptionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreate: (data: NewPrescriptionData) => void;
 }
 
 export default function NewPrescriptionDialog({
   open,
   onOpenChange,
-  onCreate,
 }: NewPrescriptionDialogProps) {
+  const queryClient = useQueryClient();
+
+  const createPrescriptionMutation = useMutation({
+    mutationFn: createProviderPrescription,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["providerPrescriptions"] });
+    },
+  });
+
+  const { data: patientsData, isLoading: isPatientsLoading } = useQuery({
+    queryKey: ["providerPatients"],
+    queryFn: getProviderPatients,
+    enabled: open,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+
+  const patientOptions = React.useMemo(() => {
+    return (patientsData?.patients || []).map((item) => ({
+      id: item.patient._id,
+      name: `${item.patient.firstName || ""} ${item.patient.lastName || ""}`.trim(),
+      code: item.patient.patientCode || "",
+    }));
+  }, [patientsData]);
+
   const [formData, setFormData] = React.useState<NewPrescriptionData>({
-    patient: "",
+    patientId: "",
+    patientName: "",
     medication: "",
     dosage: "",
     frequency: "",
@@ -47,18 +82,40 @@ export default function NewPrescriptionDialog({
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit() {
-    onCreate(formData);
-    onOpenChange(false);
-    // reset form for next time
-    setFormData({
-      patient: "",
-      medication: "",
-      dosage: "",
-      frequency: "",
-      duration: "",
-      specialInstructions: "",
-    });
+  async function handleSubmit() {
+    if (!formData.patientId) {
+      return;
+    }
+
+    try {
+      await createPrescriptionMutation.mutateAsync({
+        patientId: formData.patientId,
+        medications: [
+          {
+            name: formData.medication,
+            dosage: formData.dosage,
+            frequency: formData.frequency,
+            duration: formData.duration,
+          },
+        ],
+        instructions: formData.specialInstructions,
+        // refillsAllowed: 0,
+      });
+
+      onOpenChange(false);
+      // reset form for next time
+      setFormData({
+        patientId: "",
+        patientName: "",
+        medication: "",
+        dosage: "",
+        frequency: "",
+        duration: "",
+        specialInstructions: "",
+      });
+    } catch {
+      // Keep dialog open when create fails so user can retry.
+    }
   }
 
   return (
@@ -69,15 +126,44 @@ export default function NewPrescriptionDialog({
         </DialogHeader>
 
         <div className="space-y-4 py-2">
+          {createPrescriptionMutation.isError ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {createPrescriptionMutation.error instanceof Error
+                ? createPrescriptionMutation.error.message
+                : "Unable to create prescription."}
+            </div>
+          ) : null}
+
           <div>
             <label className="text-sm font-medium">Patient</label>
-            <Input
-              name="patient"
-              value={formData.patient}
-              onChange={handleChange}
-              className="mt-1"
-              placeholder=""
-            />
+            <Select
+              value={formData.patientId}
+              onValueChange={(value) => {
+                const selectedPatient = patientOptions.find(
+                  (p) => p.id === value,
+                );
+                setFormData((prev) => ({
+                  ...prev,
+                  patientId: value,
+                  patientName: selectedPatient?.name || "",
+                }));
+              }}
+            >
+              <SelectTrigger className="mt-1 w-full">
+                <SelectValue
+                  placeholder={
+                    isPatientsLoading ? "Loading patients..." : "Select patient"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {patientOptions.map((patient) => (
+                  <SelectItem key={patient.id} value={patient.id}>
+                    {patient.name} {patient.code ? `(${patient.code})` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <label className="text-sm font-medium">Medication Name</label>
@@ -140,8 +226,13 @@ export default function NewPrescriptionDialog({
           <Button
             className="bg-gradient-dash text-white hover:opacity-95"
             onClick={handleSubmit}
+            disabled={
+              !formData.patientId || createPrescriptionMutation.isPending
+            }
           >
-            Create &amp; Send to Patient
+            {createPrescriptionMutation.isPending
+              ? "Creating..."
+              : "Create & Send to Patient"}
           </Button>
         </DialogFooter>
       </DialogContent>
