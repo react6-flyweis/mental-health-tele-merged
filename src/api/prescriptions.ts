@@ -82,6 +82,16 @@ export interface CreateProviderPrescriptionPayload {
   refillsAllowed?: number;
 }
 
+interface CreateProviderPrescriptionData {
+  prescription: ProviderPrescription;
+}
+
+interface CreateProviderPrescriptionResponse {
+  status: "success" | "fail";
+  data?: CreateProviderPrescriptionData;
+  message?: string;
+}
+
 export async function getProviderPrescriptions() {
   try {
     const response =
@@ -109,6 +119,27 @@ export async function getProviderPrescriptionDetail(prescriptionId: string) {
 
     if (data?.status !== "success" || !data?.data) {
       throw new Error(data?.message || "Could not load prescription details");
+    }
+
+    return data.data;
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error));
+  }
+}
+
+export async function createProviderPrescription(
+  payload: CreateProviderPrescriptionPayload,
+) {
+  try {
+    const response = await apiClient.post<CreateProviderPrescriptionResponse>(
+      "/prescriptions",
+      payload,
+    );
+
+    const data = response.data;
+
+    if (data?.status !== "success") {
+      throw new Error(data?.message || "Could not create prescription");
     }
 
     return data.data;
