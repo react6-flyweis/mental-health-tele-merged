@@ -1,13 +1,17 @@
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePageTitle } from "@/store/pageTitleStore";
 import { Clock3, MessageSquare, Video } from "lucide-react";
-import { NavLink } from "react-router";
-import { getProviderSessions, type ProviderSession } from "@/api/sessions";
+import { useNavigate } from "react-router";
+import {
+  getProviderSessions,
+  startProviderSession,
+  type ProviderSession,
+} from "@/api/sessions";
 
 const buildInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase();
@@ -33,6 +37,8 @@ const getSessionHours = (
 
 export default function VideoSessionsPage() {
   usePageTitle("Video Sessions");
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ["sessions"],
@@ -41,7 +47,20 @@ export default function VideoSessionsPage() {
     retry: 1,
   });
 
-  const sessions = data?.sessions ?? [];
+  const sessions = useMemo(() => data?.sessions ?? [], [data?.sessions]);
+
+  const startSessionMutation = useMutation({
+    mutationFn: startProviderSession,
+    onSuccess: (response, sessionId) => {
+      queryClient.invalidateQueries({ queryKey: ["sessions"] });
+      navigate(`/dashboard/video-sessions/live/${sessionId}`, {
+        state: {
+          session: response.session,
+          connection: response.connection,
+        },
+      });
+    },
+  });
 
   const waitingSessions = useMemo<ProviderSession[]>(
     () => sessions.filter((session) => session.status === "scheduled"),
@@ -101,6 +120,9 @@ export default function VideoSessionsPage() {
     }
 
     return waitingSessions.map((session) => {
+      const isStartingThisSession =
+        startSessionMutation.isPending &&
+        startSessionMutation.variables === session._id;
       const patient = session.appointmentId?.patientId;
       const name =
         `${patient?.firstName ?? "Unknown"} ${patient?.lastName ?? ""}`.trim();
@@ -129,13 +151,12 @@ export default function VideoSessionsPage() {
           </div>
 
           <Button
-            asChild
             className="bg-gradient-dash text-white hover:opacity-95"
+            onClick={() => startSessionMutation.mutate(session._id)}
+            disabled={startSessionMutation.isPending}
           >
-            <NavLink to="/dashboard/video-sessions/live">
-              <Video className="size-4" />
-              Start Session
-            </NavLink>
+            <Video className="size-4" />
+            {isStartingThisSession ? "Starting..." : "Start Session"}
           </Button>
         </div>
       );
@@ -155,6 +176,14 @@ export default function VideoSessionsPage() {
         </CardHeader>
 
         <CardContent className="space-y-3 py-4">
+          {startSessionMutation.isError ? (
+            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {startSessionMutation.error instanceof Error
+                ? startSessionMutation.error.message
+                : "Unable to start session."}
+            </div>
+          ) : null}
+
           {renderWaitingRoomContent()}
         </CardContent>
       </Card>
