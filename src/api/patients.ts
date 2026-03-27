@@ -108,6 +108,17 @@ interface ProviderPatientDetailResponse {
   message?: string;
 }
 
+export interface UpdateProviderPatientRecordPayload {
+  diagnosis?: string;
+  treatmentNotes?: string;
+  medicalHistory?: string;
+}
+
+interface UpdateProviderPatientRecordResponse {
+  status: "success" | "fail";
+  message?: string;
+}
+
 export async function getProviderPatients() {
   try {
     const response = await apiClient.get<ProviderPatientsResponse>("/patients");
@@ -137,6 +148,26 @@ export async function getProviderPatientDetail(patientId: string) {
     }
 
     return data.data;
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error));
+  }
+}
+
+export async function updateProviderPatientRecord(
+  patientId: string,
+  payload: UpdateProviderPatientRecordPayload,
+) {
+  try {
+    const response = await apiClient.put<UpdateProviderPatientRecordResponse>(
+      `/patients/${patientId}`,
+      payload,
+    );
+
+    if (response.data?.status !== "success") {
+      throw new Error(response.data?.message || "Could not update patient");
+    }
+
+    return response.data;
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
   }
