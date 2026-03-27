@@ -21,6 +21,14 @@ export interface UpdateProviderPasswordPayload {
   newPassword: string;
 }
 
+export interface ProviderPaymentAccount {
+  bankName: string;
+  last4: string;
+  accountType: string;
+  stripeAccountId: string;
+}
+
+
 interface NotificationPreferencesResponse {
   status: "success" | "fail";
   data?: {
@@ -39,6 +47,14 @@ interface UpdateNotificationPreferencesResponse {
 
 interface UpdatePasswordResponse {
   status: "success" | "fail";
+  message?: string;
+}
+
+interface PaymentAccountResponse {
+  status: "success" | "fail";
+  data?: {
+    paymentAccount?: ProviderPaymentAccount;
+  };
   message?: string;
 }
 
@@ -98,6 +114,24 @@ export async function updateProviderPassword(
     return {
       message: data?.message || "Password updated successfully.",
     };
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error));
+  }
+}
+
+export async function getProviderPaymentAccount() {
+  try {
+    const { data } = await apiClient.get<PaymentAccountResponse>(
+      "/settings/payment-account",
+    );
+
+    const paymentAccount = data?.data?.paymentAccount;
+
+    if (data?.status !== "success" || !paymentAccount) {
+      throw new Error(data?.message || "Could not load payment account");
+    }
+
+    return paymentAccount;
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
   }
