@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,7 +21,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { usePageTitle } from "@/store/pageTitleStore";
 import { Save, Upload } from "lucide-react";
-import { getProviderProfile, updateProviderProfile } from "@/api/profile";
+import {
+  getProviderProfile,
+  updateProviderProfile,
+  uploadProviderLicenseDocument,
+} from "@/api/profile";
+import ProfileAvatarUploader from "@/components/profile/ProfileAvatarUploader";
 
 const profileSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required"),
@@ -59,6 +63,8 @@ export default function ProfilePage() {
   const [uploadedLicenseFiles, setUploadedLicenseFiles] = useState<
     string[] | null
   >(null);
+  const [licenseUploadSuccessMessage, setLicenseUploadSuccessMessage] =
+    useState<string | null>(null);
   const [saveSuccessMessage, setSaveSuccessMessage] = useState<string | null>(
     null,
   );
@@ -75,6 +81,21 @@ export default function ProfilePage() {
     mutationFn: updateProviderProfile,
     onSuccess: async (response) => {
       setSaveSuccessMessage(response.message);
+      await queryClient.invalidateQueries({ queryKey: ["providerProfile"] });
+    },
+  });
+
+  const uploadLicenseMutation = useMutation({
+    mutationFn: async (documents: File[]) =>
+      Promise.all(
+        documents.map((document) => uploadProviderLicenseDocument(document)),
+      ),
+    onSuccess: async (_responses, documents) => {
+      setLicenseUploadSuccessMessage(
+        documents.length === 1
+          ? "License document uploaded successfully."
+          : `${documents.length} license documents uploaded successfully.`,
+      );
       await queryClient.invalidateQueries({ queryKey: ["providerProfile"] });
     },
   });
@@ -117,13 +138,6 @@ export default function ProfilePage() {
 
   const licenseFiles = uploadedLicenseFiles ?? apiLicenseFiles;
 
-  const providerInitials = useMemo(() => {
-    const firstInitial = profileData?.firstName?.trim().charAt(0) ?? "";
-    const lastInitial = profileData?.lastName?.trim().charAt(0) ?? "";
-    const initials = `${firstInitial}${lastInitial}`.toUpperCase();
-    return initials || "--";
-  }, [profileData?.firstName, profileData?.lastName]);
-
   const errorMessage = query.isError
     ? query.error instanceof Error
       ? query.error.message
@@ -144,7 +158,18 @@ export default function ProfilePage() {
 
   function handleLicenseUpload(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
+
+    if (files.length === 0) {
+      return;
+    }
+
+    setLicenseUploadSuccessMessage(null);
     setUploadedLicenseFiles(files.map((file) => file.name));
+
+    uploadLicenseMutation.mutate(files);
+
+    // Reset so selecting the same file still triggers onChange.
+    event.target.value = "";
   }
 
   return (
@@ -181,35 +206,12 @@ export default function ProfilePage() {
 
         <CardContent className="py-5">
           <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-3">
-              <p className="text-xs font-medium text-slate-700">
-                Profile Photo
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4">
-                <Avatar className="size-14 border border-slate-200 bg-slate-100">
-                  <AvatarImage
-                    src={profileData?.profileImageUrl}
-                    alt={
-                      `${profileData?.firstName ?? ""} ${profileData?.lastName ?? ""}`.trim() ||
-                      "Profile image"
-                    }
-                  />
-                  <AvatarFallback className="font-medium text-slate-600">
-                    {providerInitials}
-                  </AvatarFallback>
-                </Avatar>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-9 gap-2 border-slate-200 text-slate-700"
-                >
-                  <Upload className="size-4" />
-                  Change Photo
-                </Button>
-              </div>
-            </div>
+            <ProfileAvatarUploader
+              firstName={profileData?.firstName}
+              lastName={profileData?.lastName}
+              profileImageUrl={profileData?.profileImageUrl}
+              disabled={query.isLoading || updateProfileMutation.isPending}
+            />
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <Field>
@@ -363,6 +365,20 @@ export default function ProfilePage() {
                 License Documents
               </p>
 
+              {uploadLicenseMutation.isError && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
+                  {uploadLicenseMutation.error instanceof Error
+                    ? uploadLicenseMutation.error.message
+                    : "Unable to upload license document."}
+                </div>
+              )}
+
+              {licenseUploadSuccessMessage && (
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-700">
+                  {licenseUploadSuccessMessage}
+                </div>
+              )}
+
               <label
                 htmlFor="license-documents"
                 className="block cursor-pointer"
@@ -384,13 +400,19 @@ export default function ProfilePage() {
                 accept=".pdf,.png,.jpg,.jpeg"
                 multiple
                 className="sr-only"
-                disabled={query.isLoading || updateProfileMutation.isPending}
+                disabled={
+                  query.isLoading ||
+                  updateProfileMutation.isPending ||
+                  uploadLicenseMutation.isPending
+                }
                 onChange={handleLicenseUpload}
               />
 
               {licenseFiles.length > 0 && (
                 <p className="text-xs text-slate-600">
-                  Selected: {licenseFiles.join(", ")}
+                  {uploadLicenseMutation.isPending
+                    ? `Uploading: ${licenseFiles[0]}`
+                    : `Selected: ${licenseFiles.join(", ")}`}
                 </p>
               )}
             </div>
