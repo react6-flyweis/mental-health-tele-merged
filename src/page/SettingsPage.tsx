@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +25,7 @@ import UpdatePaymentMethodDialog, {
 } from "@/components/settings/UpdatePaymentMethodDialog";
 import LogoutDialog from "@/components/settings/LogoutDialog";
 import NotificationPreferencesSection from "@/components/settings/NotificationPreferencesSection";
+import { downloadProviderDataExport, getProviderPaymentAccount } from "@/api/settings";
 import { useUpdatePasswordMutation } from "@/hooks/useNotificationPreferencesMutations";
 import { usePageTitle } from "@/store/pageTitleStore";
 import { useAuthStore } from "@/store/authStore";
@@ -45,6 +47,18 @@ const passwordSchema = z
 
 type PasswordForm = z.infer<typeof passwordSchema>;
 
+const DEFAULT_PAYMENT_METHOD: PaymentMethodForm = {
+  method: "bank",
+  accountHolderName: "",
+  bankName: "",
+  accountNumber: "",
+  routingNumber: "",
+  accountType: "",
+  cardNumber: "",
+  expiryDate: "",
+  cvv: "",
+};
+
 export default function SettingsPage() {
   usePageTitle("Settings");
   const navigate = useNavigate();
@@ -55,20 +69,47 @@ export default function SettingsPage() {
   const [passwordSuccessMessage, setPasswordSuccessMessage] = useState<
     string | null
   >(null);
+  const [isDownloadDataPending, setIsDownloadDataPending] = useState(false);
+  const [downloadDataErrorMessage, setDownloadDataErrorMessage] = useState<
+    string | null
+  >(null);
+  const [downloadDataSuccessMessage, setDownloadDataSuccessMessage] = useState<
+    string | null
+  >(null);
 
   const updatePasswordMutation = useUpdatePasswordMutation();
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodForm>({
-    method: "bank",
-    accountHolderName: "Dr. Sarah Mitchell",
-    bankName: "Bank of America",
-    accountNumber: "1234567890",
-    routingNumber: "021000021",
-    accountType: "Checking",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
+  const paymentAccountQuery = useQuery({
+    queryKey: ["paymentAccount"],
+    queryFn: getProviderPaymentAccount,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
+
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodForm | null>(
+    null,
+  );
+
+  const paymentMethodFromApi = useMemo<PaymentMethodForm | null>(() => {
+    if (!paymentAccountQuery.data) {
+      return null;
+    }
+
+    return {
+      method: "bank",
+      accountHolderName: "",
+      bankName: paymentAccountQuery.data.bankName || "",
+      accountNumber: paymentAccountQuery.data.last4 || "",
+      routingNumber: "",
+      accountType: paymentAccountQuery.data.accountType || "",
+      cardNumber: "",
+      expiryDate: "",
+      cvv: "",
+    };
+  }, [paymentAccountQuery.data]);
+
+  const effectivePaymentMethod =
+    paymentMethod ?? paymentMethodFromApi ?? DEFAULT_PAYMENT_METHOD;
 
   const {
     register,
@@ -112,6 +153,56 @@ export default function SettingsPage() {
 
   function onPaymentMethodSave(data: PaymentMethodForm) {
     setPaymentMethod(data);
+  }
+
+  function buildExportFileName(exportedAt?: string) {
+    const fallback = "provider-data-export";
+
+    if (!exportedAt) {
+      return `${fallback}.json`;
+    }
+
+    const timestamp = exportedAt
+      .replace(/[:.]/g, "-")
+      .replace(/[^0-9TZ-]/g, "")
+      .slice(0, 25);
+
+    return `${fallback}-${timestamp || "latest"}.json`;
+  }
+
+  async function onDownloadMyData() {
+    setDownloadDataErrorMessage(null);
+    setDownloadDataSuccessMessage(null);
+    setIsDownloadDataPending(true);
+
+    try {
+      const exportData = await downloadProviderDataExport();
+      const fileName = buildExportFileName(
+        typeof exportData.exportedAt === "string"
+          ? exportData.exportedAt
+          : undefined,
+      );
+
+      const fileContent = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([fileContent], { type: "application/json" });
+      const downloadUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+
+      anchor.href = downloadUrl;
+      anchor.download = fileName;
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(downloadUrl);
+
+      setDownloadDataSuccessMessage("Your data export has been downloaded.");
+    } catch (error) {
+      setDownloadDataErrorMessage(
+        error instanceof Error ? error.message : "Unable to download your data.",
+      );
+    } finally {
+      setIsDownloadDataPending(false);
+    }
   }
 
   return (
@@ -217,10 +308,20 @@ export default function SettingsPage() {
         <CardContent className="flex flex-col gap-4">
           <div className="rounded-lg bg-muted/50 p-4">
             Connected Account
+            {paymentAccountQuery.isError ? (
+              <p className="mt-2 text-sm text-red-600">
+                {paymentAccountQuery.error instanceof Error
+                  ? paymentAccountQuery.error.message
+                  : "Unable to load payment account."}
+              </p>
+            ) : null}
+            {paymentAccountQuery.isLoading ? (
+              <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
+            ) : null}
             <div className="font-medium">
-              {paymentMethod.method === "bank"
-                ? `${paymentMethod.bankName || "Bank Account"} ****${maskLast4(paymentMethod.accountNumber)}`
-                : `Debit Card ****${maskLast4(paymentMethod.cardNumber)}`}
+              {effectivePaymentMethod.method === "bank"
+                ? `${effectivePaymentMethod.bankName || "Bank Account"} ****${maskLast4(effectivePaymentMethod.accountNumber)}`
+                : `Debit Card ****${maskLast4(effectivePaymentMethod.cardNumber)}`}
             </div>
           </div>
           <Button
@@ -245,8 +346,23 @@ export default function SettingsPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-2">
-          <Button variant="outline" className="w-full justify-start h-10">
-            Download My Data
+          {downloadDataErrorMessage ? (
+            <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {downloadDataErrorMessage}
+            </p>
+          ) : null}
+          {downloadDataSuccessMessage ? (
+            <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+              {downloadDataSuccessMessage}
+            </p>
+          ) : null}
+          <Button
+            variant="outline"
+            className="w-full justify-start h-10"
+            onClick={onDownloadMyData}
+            disabled={isDownloadDataPending}
+          >
+            {isDownloadDataPending ? "Preparing your data..." : "Download My Data"}
           </Button>
           <Button variant="outline" className="w-full justify-start h-10">
             Privacy Policy
@@ -283,7 +399,7 @@ export default function SettingsPage() {
         open={isPaymentDialogOpen}
         onOpenChange={setIsPaymentDialogOpen}
         onSave={onPaymentMethodSave}
-        initialValues={paymentMethod}
+        initialValues={effectivePaymentMethod}
       />
 
       <LogoutDialog
