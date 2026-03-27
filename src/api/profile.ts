@@ -40,6 +40,12 @@ interface UpdateProviderProfilePhotoResponse {
   message?: string;
 }
 
+interface UploadProviderLicenseDocumentResponse {
+  status: "success" | "fail";
+  data?: ProviderProfileDetails;
+  message?: string;
+}
+
 export async function getProviderProfile() {
   try {
     const { data } = await apiClient.get<ProviderProfileResponse>("/profile");
@@ -98,6 +104,35 @@ export async function updateProviderProfilePhoto(photo: File) {
     return {
       profile: data?.data,
       message: data?.message || "Profile photo updated successfully.",
+    };
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error));
+  }
+}
+
+export async function uploadProviderLicenseDocument(document: File) {
+  const formData = new FormData();
+  formData.append("document", document);
+
+  try {
+    const { data } =
+      await apiClient.post<UploadProviderLicenseDocumentResponse>(
+        "/profile/documents",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+    if (data?.status !== "success") {
+      throw new Error(data?.message || "Could not upload license document");
+    }
+
+    return {
+      profile: data?.data,
+      message: data?.message || "License document uploaded successfully.",
     };
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
