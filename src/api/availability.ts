@@ -34,12 +34,15 @@ export interface ProviderAvailabilityData {
 
 export interface UpdateProviderAvailabilityScheduleItem {
   day: string;
-  slots: string[];
+  slots: {
+    startTime: string;
+    endTime: string;
+  }[];
 }
 
 export interface UpdateProviderAvailabilityPayload {
-  schedule: UpdateProviderAvailabilityScheduleItem[];
-  timezone: string;
+  availability: UpdateProviderAvailabilityScheduleItem[];
+  timezone?: string;
 }
 
 export interface UpdateProviderSessionTypeItem {
@@ -127,7 +130,7 @@ export async function updateProviderBlockedDates(
   payload: UpdateProviderBlockedDatesPayload,
 ) {
   try {
-    const { data } = await apiClient.put<UpdateProviderAvailabilityResponse>(
+    const { data } = await apiClient.post<UpdateProviderAvailabilityResponse>(
       "/availability/blocked-dates",
       payload,
     );
