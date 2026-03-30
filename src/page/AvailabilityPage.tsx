@@ -268,24 +268,34 @@ export default function AvailabilityPage() {
   }
 
   function handleSaveSchedule() {
-    const payloadSchedule = schedule
-      .map((item) => ({
-        day: item.day,
-        slots: Array.from(
-          new Set(
+    const payloadAvailability = schedule
+      .map((item) => {
+        const uniqueSlots = Array.from(
+          new Map(
             item.slots
-              .map((slot) => slot.start)
-              .filter((slotStart) => slotStart.trim().length > 0),
-          ),
-        ).sort((a, b) => a.localeCompare(b)),
-      }))
+              .filter(
+                (slot) =>
+                  slot.start.trim().length > 0 && slot.end.trim().length > 0,
+              )
+              .map((slot) => [
+                `${slot.start}-${slot.end}`,
+                { startTime: slot.start, endTime: slot.end },
+              ]),
+          ).values(),
+        ).sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+        return {
+          day: item.day,
+          slots: uniqueSlots,
+        };
+      })
       .filter((item) => item.slots.length > 0);
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
     updateScheduleMutation.mutate(
       {
-        schedule: payloadSchedule,
+        availability: payloadAvailability,
         timezone,
       },
       {
