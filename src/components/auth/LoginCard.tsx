@@ -21,6 +21,10 @@ export default function LoginCard({
   const navigate = useNavigate();
   const location = useLocation();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const registrationSuccess = Boolean(
+    (location.state as { registrationSuccess?: boolean } | null)
+      ?.registrationSuccess,
+  );
 
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
@@ -139,11 +143,25 @@ export default function LoginCard({
           </button>
         </form>
 
+        {registrationSuccess && role === "Provider" ? (
+          <p className="text-center mt-6 text-sm text-green-700" role="status">
+            Registration successful. Please log in with your new account.
+          </p>
+        ) : null}
+
         <p className="text-center mt-8 text-[#4A5565] text-sm">
           Don't have an account?{" "}
-          <span className="text-[#219580] cursor-pointer font-medium">
-            Sign up
-          </span>
+          {role === "Provider" ? (
+            <button
+              type="button"
+              onClick={() => navigate("/provider-register")}
+              className="text-[#219580] font-medium"
+            >
+              Sign up
+            </button>
+          ) : (
+            <span className="text-[#219580] font-medium">Sign up</span>
+          )}
         </p>
       </div>
 
