@@ -12,6 +12,7 @@ import { NotFound } from "@/page/NotFound";
 const SignupRolePage = lazy(() => import("@/page/SignupRolePage"));
 const PatientLoginPage = lazy(() => import("@/page/PatientLoginPage"));
 const ProviderLoginPage = lazy(() => import("@/page/ProviderLoginPage"));
+const ProviderRegisterPage = lazy(() => import("@/page/ProviderRegisterPage"));
 const DashboardPage = lazy(() => import("@/page/DashboardPage"));
 const AppointmentsPage = lazy(() => import("@/page/AppointmentsPage"));
 const VideoSessionsPage = lazy(() => import("@/page/VideoSessionsPage"));
@@ -41,6 +42,7 @@ export const Routes: RouteObject[] = [
           // { path: "/signin", element: <SignupRolePage /> },
           { path: "patient-login", element: <PatientLoginPage /> },
           { path: "provider-login", element: <ProviderLoginPage /> },
+          { path: "provider-register", element: <ProviderRegisterPage /> },
         ],
       },
     ],
