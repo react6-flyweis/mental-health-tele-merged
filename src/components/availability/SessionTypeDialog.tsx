@@ -9,6 +9,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
   Dialog,
@@ -109,7 +110,7 @@ export default function SessionTypeDialog({
                     value={String(field.value)}
                   >
                     <SelectTrigger className="w-full">
-                      {field.value} Minutes
+                      <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
                     <SelectContent>
                       {DURATION_OPTIONS.map((d) => (
