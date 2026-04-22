@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Provider } from "@/components/dashboard/types";
+import { Provider } from "@/modules/main/components/dashboard/types";
 
 export default function ConfirmStep({
   provider,

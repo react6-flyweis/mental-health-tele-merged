@@ -69,24 +69,24 @@ export default function ArticleGrid() {
     }
 
     const pages: (number | string)[] = [];
-    pages(1);
+    pages.push(1);
 
     if (currentPage > 4) {
-      pages("...");
+      pages.push("...");
     }
 
     const start = Math.max(2, currentPage - 2);
     const end = Math.min(totalCount - 1, currentPage + 2);
 
     for (let i = start; i <= end; i++) {
-      pages(i);
+      pages.push(i);
     }
 
     if (currentPage < totalCount - 3) {
-      pages("...");
+      pages.push("...");
     }
 
-    pages(totalCount);
+    pages.push(totalCount);
     return pages;
   }, [totalCount, currentPage]);
 

@@ -30,7 +30,6 @@ export default function OcdMedication() {
                 src={medImg}
                 alt="Person practicing calming exercise"
                 className="w-full h-full object-cover"
-                priority={false}
               />
             </div>
           </div>

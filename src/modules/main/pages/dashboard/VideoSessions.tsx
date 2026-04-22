@@ -5,18 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Calendar, Clock3, Video } from "lucide-react";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
-import dynamic from "next/dynamic";
 import { useSearchParams } from "react-router";
 import { useDebounce } from "@/hooks/useDebounce";
 
-const VideoCall = dynamic(() => import("./video"), {
-  ssr: false,
-  loading: () => <div>Loading video session...</div>,
-});
+const VideoCall = lazy(() => import("./video"));
 
 function VideoSessionsContent() {
   const [searchParams] = useSearchParams();
@@ -33,7 +29,7 @@ function VideoSessionsContent() {
   const fetchSession = async () => {
     try {
       setLoading(true);
-      const res = await dashboardApi.getSessionData("patient",search||"");
+      const res = await dashboardApi.getSessionData("patient", search || "");
       setSessions(res?.data?.sessions || []);
     } catch (error) {
       console.error("Error fetching video sessions:", error);
@@ -105,7 +101,11 @@ function VideoSessionsContent() {
     }
   };
   if (isVideoSession) {
-    return <VideoCall connection={connection} />;
+    return (
+      <Suspense fallback={<div>Loading video session...</div>}>
+        <VideoCall connection={connection} />
+      </Suspense>
+    );
   }
   return (
     <div className="space-y-6 h-full">
@@ -187,7 +187,8 @@ function VideoSessionsContent() {
           ) : filteredSessions?.length === 0 ? (
             <Card className="p-6 text-center text-muted-foreground">
               <p className="text-base font-medium">
-                No {sessionTab === "upcoming" ? "upcoming" : "completed"} sessions found.
+                No {sessionTab === "upcoming" ? "upcoming" : "completed"}{" "}
+                sessions found.
               </p>
               <p className="mt-2 text-sm">
                 Check back later or schedule a new session with your provider.
@@ -221,9 +222,7 @@ function VideoSessionsContent() {
                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
                           <span className="inline-flex items-center gap-1.5">
                             <Calendar className="size-3.5" />
-                            {new Date(
-                              item?.appointmentId?.date,
-                            ).toDateString()}
+                            {new Date(item?.appointmentId?.date).toDateString()}
                           </span>
                           <span>•</span>
                           <span>{item?.appointmentId?.time}</span>

@@ -1,19 +1,15 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { cn } from "@/lib/utils";
 import { AppointmentCard } from "@/modules/main/components/dashboard/AppointmentCard";
 import { Calendar } from "lucide-react";
 import { dashboardApi } from "@/api/dashboard.service";
 import { toast } from "react-toastify";
-import dynamic from "next/dynamic";
 import { useSearchParams } from "react-router";
 import { useDebounce } from "@/hooks/useDebounce";
 
-const VideoCall = dynamic(() => import("./video"), {
-  ssr: false,
-  loading: () => <div>Loading video session...</div>,
-});
+const VideoCall = lazy(() => import("./video"));
 
 function AppointmentsContent() {
   const [searchParams] = useSearchParams();
@@ -103,7 +99,11 @@ function AppointmentsContent() {
     }
   };
   if (isVideoSession) {
-    return <VideoCall connection={connection} />;
+    return (
+      <Suspense fallback={<div>Loading video session...</div>}>
+        <VideoCall connection={connection} />
+      </Suspense>
+    );
   }
   return (
     <div className="space-y-6 h-full">

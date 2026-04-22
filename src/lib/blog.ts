@@ -1,4 +1,4 @@
-import { Article } from "@/components/blog/ArticleCard";
+import { Article } from "@/modules/main/components/blog/ArticleCard";
 
 // sample articles for demonstration purposes
 export const articles: Article[] = [

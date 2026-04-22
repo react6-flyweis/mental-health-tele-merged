@@ -1,4 +1,4 @@
-import { Conversation } from "@/components/messages/types";
+import type { Conversation } from "@/components/messages/types";
 import { ChatHeader } from "@/components/messages/ChatHeader";
 import { ChatMessages } from "@/components/messages/ChatMessages";
 import { MessageComposer } from "@/components/messages/MessageComposer";
@@ -15,13 +15,13 @@ type ChatWindowProps = {
 export function ChatWindow({
   activeConversation,
   onCloseConversation,
-  chatId
+  chatId,
 }: ChatWindowProps) {
- 
-
   const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [sendMessageError, setSendMessageError] = useState<string | null>(null);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [conversationData, setConversationData] = useState<any>({});
   const fetchMessages = async () => {
     if (!chatId) return;
@@ -39,7 +39,7 @@ export function ChatWindow({
         text: msg.content,
         sender: msg.senderType,
         time: msg.createdAt,
-        isOwn: msg.senderType === "patient"
+        isOwn: msg.senderType === "patient",
       }));
       const chat = res?.data?.chat;
 
@@ -48,7 +48,7 @@ export function ChatWindow({
         providerName: `${chat?.providerId?.firstName} ${chat?.providerId?.lastName}`,
         specialty: chat?.providerId?.specialty,
         image: chat?.providerId?.profileImageUrl,
-        avatarInitials: `${chat?.providerId?.firstName[0]}${chat?.providerId?.lastName[0]}`
+        avatarInitials: `${chat?.providerId?.firstName[0]}${chat?.providerId?.lastName[0]}`,
       });
       setMessages(formattedMessages);
     } catch (err: any) {
@@ -64,7 +64,23 @@ export function ChatWindow({
       fetchMessages();
     }
   }, [chatId]);
- if (!activeConversation) {
+
+  const handleSendMessage = async (content: string) => {
+    if (!chatId) return;
+
+    try {
+      setIsSendingMessage(true);
+      setSendMessageError(null);
+      await settingApi.sendMessage({ content }, "patient", chatId);
+      await fetchMessages();
+    } catch (err: any) {
+      setSendMessageError(err?.message || "Failed to send message");
+      throw err;
+    } finally {
+      setIsSendingMessage(false);
+    }
+  };
+  if (!activeConversation) {
     return (
       <section className="flex h-full min-h-155 items-center justify-center rounded-xl border bg-card p-6">
         <div className="text-center">
@@ -86,7 +102,11 @@ export function ChatWindow({
         onClose={onCloseConversation}
       />
       <ChatMessages messages={messages} />
-      <MessageComposer chatId={activeConversation.id} fetchMessages={fetchMessages} />
+      <MessageComposer
+        onSend={handleSendMessage}
+        isSending={isSendingMessage}
+        errorMessage={sendMessageError}
+      />
     </section>
   );
 }

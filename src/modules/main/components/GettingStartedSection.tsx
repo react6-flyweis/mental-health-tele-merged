@@ -77,7 +77,6 @@ export default function GettingStartedSection({
                       width={1200}
                       height={800}
                       className="object-cover w-full h-full"
-                      unoptimized={typeof s.image === "string"}
                     />
                   </div>
 

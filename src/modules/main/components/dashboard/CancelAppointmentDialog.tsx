@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 interface CancelAppointmentDialogProps {
   appointment: Appointment;
   trigger?: React.ReactNode;
-  onConfirm?: (id:any) => void;
+  onConfirm?: (id: any) => void;
 }
 
 export default function CancelAppointmentDialog({
@@ -29,7 +29,6 @@ export default function CancelAppointmentDialog({
   onConfirm,
 }: CancelAppointmentDialogProps) {
   const router = useNavigate();
-
 
   return (
     <Dialog>
@@ -84,7 +83,7 @@ export default function CancelAppointmentDialog({
                 onConfirm(appointment);
               }
               // default action: navigate back to dashboard or refresh
-              router.refresh();
+              router(0);
             }}
           >
             Cancel Appointment

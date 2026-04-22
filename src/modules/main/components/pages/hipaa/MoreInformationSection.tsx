@@ -1,5 +1,5 @@
 import { Shield } from "lucide-react";
-import { HIPAASection } from "@/components/pages/HIPAASection";
+import { HIPAASection } from "@/modules/main/components/pages/HIPAASection";
 
 export default function MoreInformationSection() {
   return (

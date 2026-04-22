@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { FileText } from "lucide-react";
@@ -74,7 +74,7 @@ export default function TermsOfUseContent({ data }: any) {
       {
         rootMargin: "-40% 0px -55% 0px",
         threshold: 0.25,
-      }
+      },
     );
 
     Object.values(sectionRefs.current).forEach((el: any) => {
@@ -96,7 +96,6 @@ export default function TermsOfUseContent({ data }: any) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-16 lg:flex lg:space-x-8">
-
       <aside className="hidden lg:block lg:w-72 sticky top-24 h-fit">
         <Card className="p-5 gap-0 shadow-sm">
           <h3 className="font-semibold mb-4 text-lg">Table of Contents</h3>
@@ -109,7 +108,7 @@ export default function TermsOfUseContent({ data }: any) {
                     "w-full text-left flex items-center text-sm rounded-xl hover:text-primary px-4 py-2.5 transition-colors",
                     activeId === s.id
                       ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground"
+                      : "text-muted-foreground",
                   )}
                 >
                   <FileText className="size-4 mr-2 shrink-0" />

@@ -1,4 +1,4 @@
-import { MessageItem } from "@/components/messages/types";
+import type { MessageItem } from "@/components/messages/types";
 import { cn } from "@/lib/utils";
 
 type ChatMessagesProps = {
@@ -22,27 +22,25 @@ export function ChatMessages({ messages }: ChatMessagesProps) {
             <div
               className={cn(
                 "rounded-lg border px-2 py-1.5 text-sm leading-6",
-                isPatientMessage
-                  ? "bg-gray-100 text-gray-800"
-                  : "bg-card",
+                isPatientMessage ? "bg-gray-100 text-gray-800" : "bg-card",
               )}
             >
               {message.text}
             </div>
             <p
-  className={cn(
-    "text-muted-foreground mt-1 text-xs",
-    isPatientMessage ? "text-right" : "text-left",
-  )}
->
-{new Date(message.time).toLocaleString("en-IN", {
-  day: "2-digit",
-  month: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: true,
-})}
-</p>
+              className={cn(
+                "text-muted-foreground mt-1 text-xs",
+                isPatientMessage ? "text-right" : "text-left",
+              )}
+            >
+              {new Date(message.time).toLocaleString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </p>
           </div>
         );
       })}

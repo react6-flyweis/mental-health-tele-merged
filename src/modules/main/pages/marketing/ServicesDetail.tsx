@@ -16,13 +16,16 @@ import { useLocation } from "react-router";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function HeroSection() {
-  const location = useLocation();
-  const slug = location.split("/")[2];
+  const { pathname } = useLocation();
+  const slug = pathname.split("/")[2] || "";
   const {
     data: service,
     loading: serviceLoading,
     error: serviceError,
-  } = useFetch(publicPageApi.getServiceBySlug, slug) as any;
+  } = useFetch(
+    (value?: string) => publicPageApi.getServiceBySlug(value || ""),
+    slug,
+  ) as any;
   console.log({ service });
   const pageData = service?.page;
   const providers = service?.providers;

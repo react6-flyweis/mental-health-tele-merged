@@ -13,13 +13,12 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Video } from "lucide-react";
-import TherapistStep from "@/components/dashboard/steps/TherapistStep";
-import DateStep from "@/components/dashboard/steps/DateStep";
-import TimeStep from "@/components/dashboard/steps/TimeStep";
-import DetailsStep from "@/components/dashboard/steps/DetailsStep";
-import ConfirmStep from "@/components/dashboard/steps/ConfirmStep";
-import PaymentDialog from "@/components/dashboard/PaymentDialog";
-import { Provider } from "@/components/dashboard/types";
+import TherapistStep from "@/modules/main/components/dashboard/steps/TherapistStep";
+import DateStep from "@/modules/main/components/dashboard/steps/DateStep";
+import TimeStep from "@/modules/main/components/dashboard/steps/TimeStep";
+import DetailsStep from "@/modules/main/components/dashboard/steps/DetailsStep";
+import ConfirmStep from "@/modules/main/components/dashboard/steps/ConfirmStep";
+import PaymentDialog from "@/modules/main/components/dashboard/PaymentDialog";
 import { patientApi } from "@/api/patient.api";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
@@ -39,17 +38,17 @@ export default function BookAppointmentDialog({ provider }: { provider: any }) {
   const handleMyProviders = async (providerId: string) => {
     try {
       const awaitData = await patientApi.getProviderById(providerId);
-      setOpen(true)
+      setOpen(true);
       setProviderData(awaitData);
-    } catch (error) {
-    }
-  }
+    } catch (error) {}
+  };
   useEffect(() => {
     setSelectedTime(null);
   }, [date]);
   const handleBooking = async () => {
     try {
-      const selectedTimeFromStorage = sessionStorage.getItem("selectedTime") || "";
+      const selectedTimeFromStorage =
+        sessionStorage.getItem("selectedTime") || "";
       const parsed = dayjs(selectedTimeFromStorage, "hh:mm A");
 
       let time = selectedTimeFromStorage;
@@ -66,9 +65,8 @@ export default function BookAppointmentDialog({ provider }: { provider: any }) {
         time = parsed.minute(minutes).format("HH:mm");
       }
       {
-
       }
-      const formattedDate = dayjs(date).format("YYYY-MM-DD")
+      const formattedDate = dayjs(date).format("YYYY-MM-DD");
       const res = await patientApi.bookAppointment({
         providerId: provider._id,
         date: formattedDate,
@@ -97,15 +95,18 @@ export default function BookAppointmentDialog({ provider }: { provider: any }) {
   }, [open]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>      <DialogTrigger asChild>
-      <Button className="bg-gradient-dash w-full" onClick={() => {
-
-        handleMyProviders(provider?._id);
-      }}>
-        <Video className="size-4 mr-2" /> Book Now
-      </Button>
-    </DialogTrigger>
-
+    <Dialog open={open} onOpenChange={setOpen}>
+      {" "}
+      <DialogTrigger asChild>
+        <Button
+          className="bg-gradient-dash w-full"
+          onClick={() => {
+            handleMyProviders(provider?._id);
+          }}
+        >
+          <Video className="size-4 mr-2" /> Book Now
+        </Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-semibold">Book Appointment</DialogTitle>
@@ -129,12 +130,13 @@ export default function BookAppointmentDialog({ provider }: { provider: any }) {
                 return (
                   <div key={label} className="flex flex-col items-center gap-2">
                     <div
-                      className={`size-8 rounded-full flex items-center justify-center text-xs font-medium ${active
-                        ? "bg-gradient-dash text-white"
-                        : completed
+                      className={`size-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                        active
                           ? "bg-gradient-dash text-white"
-                          : "bg-muted text-muted-foreground"
-                        }`}
+                          : completed
+                            ? "bg-gradient-dash text-white"
+                            : "bg-muted text-muted-foreground"
+                      }`}
                     >
                       {i + 1}
                     </div>
@@ -151,7 +153,12 @@ export default function BookAppointmentDialog({ provider }: { provider: any }) {
         <div className="mt-4">
           {step === 1 && <TherapistStep provider={provider} />}
           {step === 2 && (
-            <DateStep minDate={new Date()} date={date} setDate={setDate} provider={provider} />
+            <DateStep
+              minDate={new Date()}
+              date={date}
+              setDate={setDate}
+              provider={provider}
+            />
           )}
           {step === 3 && (
             <TimeStep

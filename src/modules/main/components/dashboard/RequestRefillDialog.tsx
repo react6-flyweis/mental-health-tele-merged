@@ -20,7 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CheckCircle } from "lucide-react";
 import type { PrescriptionItem } from "./types";
-import PaymentDialog from "@/components/dashboard/PaymentDialog";
+import PaymentDialog from "@/modules/main/components/dashboard/PaymentDialog";
 
 const refillSchema = z.object({
   pharmacy: z.string().optional(),
@@ -49,7 +49,7 @@ export default function RequestRefillDialog({
     },
   });
 
-  console.log({prescription})
+  console.log({ prescription });
 
   const onSubmit = (values: RefillFormValues) => {
     if (handleRefill) {
@@ -83,10 +83,11 @@ export default function RequestRefillDialog({
           <div className="space-y-4">
             <div className="p-4 bg-slate-50 rounded-md">
               <div className="text-sm font-medium">
-                {prescription?.medication || prescription?.name} {prescription?.dosage}
+                {prescription?.medication || prescription?.name}{" "}
+                {prescription?.dosage}
               </div>
               <div className="text-xs text-muted-foreground">
-                {prescription?.schedule  || prescription?.frequency}
+                {prescription?.schedule || prescription?.frequency}
               </div>
             </div>
 
@@ -140,11 +141,11 @@ export default function RequestRefillDialog({
                 Cancel
               </Button>
             </DialogClose>
-            
+
             <PaymentDialog>
               <Button className="bg-gradient-dash">
-              Submit Refill Request
-            </Button>
+                Submit Refill Request
+              </Button>
             </PaymentDialog>
           </DialogFooter>
         </form>

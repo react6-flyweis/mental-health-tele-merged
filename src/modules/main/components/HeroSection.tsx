@@ -89,8 +89,7 @@ export default function HeroSection({ data, conditions }: any) {
                                 <img
                                   src={c.src}
                                   alt={c.name}
-                                  fill
-                                  className="object-cover"
+                                  className="object-cover w-full h-full"
                                 />
                               ) : (
                                 <div className="w-full h-full bg-gray-200" />

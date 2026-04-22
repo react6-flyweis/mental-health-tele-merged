@@ -25,7 +25,7 @@ import {
 import { patientApi } from "@/api/patient.api";
 import { toast } from "react-toastify";
 import { useRef } from "react";
-import { useAuth } from "@/components/context/auth.context";
+import { useAuth } from "@/modules/main/context/auth.context";
 
 const timeZoneOptions = [
   "Pacific Time (PT)",
@@ -53,19 +53,19 @@ const fullWidthFields: Array<{
   label: string;
   placeholder: string;
 }> = [
-    { key: "email", label: "Email", placeholder: "sarah.j@email.com" },
-    {
-      key: "phoneNumber",
-      label: "Phone Number",
-      placeholder: "+1 (555) 123-4567",
-    },
-    { key: "dateOfBirth", label: "Date of Birth", placeholder: "" },
-    {
-      key: "address",
-      label: "Address",
-      placeholder: "123 Main Street, San Francisco, CA 94102",
-    },
-  ];
+  { key: "email", label: "Email", placeholder: "sarah.j@email.com" },
+  {
+    key: "phoneNumber",
+    label: "Phone Number",
+    placeholder: "+1 (555) 123-4567",
+  },
+  { key: "dateOfBirth", label: "Date of Birth", placeholder: "" },
+  {
+    key: "address",
+    label: "Address",
+    placeholder: "123 Main Street, San Francisco, CA 94102",
+  },
+];
 
 interface ProfileSettingsFormProps {
   defaultValues?: Partial<ProfileFormValues>;
@@ -92,38 +92,38 @@ export function ProfileSettingsForm({
     },
   });
 
-  const [image, setImage] = useState<string | null>(null)
-  const [error, setError] = useState("")
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [image, setImage] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleButtonClick = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    const validTypes = ["image/jpeg", "image/png", "image/gif"]
+    const validTypes = ["image/jpeg", "image/png", "image/gif"];
     if (!validTypes.includes(file.type)) {
-      setError("Only JPG, PNG or GIF allowed")
-      return
+      setError("Only JPG, PNG or GIF allowed");
+      return;
     }
 
-    const maxSize = 5 * 1024 * 1024
+    const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      setError("File size should be less than 5MB")
-      return
+      setError("File size should be less than 5MB");
+      return;
     }
 
-    setError("")
+    setError("");
 
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onloadend = () => {
-      setImage(reader.result as string)
-    }
-    reader.readAsDataURL(file)
-  }
+      setImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -142,7 +142,7 @@ export function ProfileSettingsForm({
           address: data?.address || "",
           timeZone: data?.timezone || "Pacific Time (PT)",
         });
-      } catch { }
+      } catch {}
     };
 
     fetchProfile();
@@ -184,7 +184,10 @@ export function ProfileSettingsForm({
           <div className="flex flex-wrap items-center gap-4">
             <Avatar className="size-16">
               {image ? (
-                <img src={image} className="w-full h-full object-cover rounded-full" />
+                <img
+                  src={image}
+                  className="w-full h-full object-cover rounded-full"
+                />
               ) : (
                 <AvatarFallback>
                   {form.watch("firstName")?.[0]}
@@ -214,9 +217,7 @@ export function ProfileSettingsForm({
                 JPG, PNG or GIF. Max size 5MB
               </p>
 
-              {error && (
-                <p className="text-xs text-red-500">{error}</p>
-              )}
+              {error && <p className="text-xs text-red-500">{error}</p>}
             </div>
           </div>
 
@@ -226,10 +227,7 @@ export function ProfileSettingsForm({
                 <FieldLabel className="w-auto border-0 p-0">
                   First Name
                 </FieldLabel>
-                <Input
-                  className="bg-muted"
-                  {...form.register("firstName")}
-                />
+                <Input className="bg-muted" {...form.register("firstName")} />
                 <FieldError errors={[form.formState.errors.firstName]} />
               </Field>
 
@@ -237,10 +235,7 @@ export function ProfileSettingsForm({
                 <FieldLabel className="w-auto border-0 p-0">
                   Last Name
                 </FieldLabel>
-                <Input
-                  className="bg-muted"
-                  {...form.register("lastName")}
-                />
+                <Input className="bg-muted" {...form.register("lastName")} />
                 <FieldError errors={[form.formState.errors.lastName]} />
               </Field>
             </div>
@@ -257,16 +252,12 @@ export function ProfileSettingsForm({
                   type={fieldConfig.key === "dateOfBirth" ? "date" : "text"}
                   {...form.register(fieldConfig.key)}
                 />
-                <FieldError
-                  errors={[form.formState.errors[fieldConfig.key]]}
-                />
+                <FieldError errors={[form.formState.errors[fieldConfig.key]]} />
               </Field>
             ))}
 
             <Field>
-              <FieldLabel className="w-auto border-0 p-0">
-                Time Zone
-              </FieldLabel>
+              <FieldLabel className="w-auto border-0 p-0">Time Zone</FieldLabel>
               <Controller
                 name="timeZone"
                 control={form.control}

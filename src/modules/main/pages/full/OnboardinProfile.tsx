@@ -23,7 +23,11 @@ import { toast } from "react-toastify";
 import { patientApi } from "@/api/patient.api";
 
 function PatientProfileContent() {
-  const { data: bookingFlow, loading, error } = useFetch(publicPageApi.getBookingFlow) as any;
+  const {
+    data: bookingFlow,
+    loading,
+    error,
+  } = useFetch(publicPageApi.getBookingFlow) as any;
   const [providerData, setProviderData] = useState<any>(null);
   const [providerLoading, setProviderLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
@@ -35,16 +39,14 @@ function PatientProfileContent() {
   const providerId = searchParams.get("providerId");
   const router = useNavigate();
   const storedProviderData = sessionStorage.getItem("providerData");
-  const parsedProviderData = storedProviderData ? JSON.parse(storedProviderData) : null;
+  const parsedProviderData = storedProviderData
+    ? JSON.parse(storedProviderData)
+    : null;
   const fields = bookingFlow?.profileStep?.fields || [];
 
   const getMaxDOB = () => {
     const today = new Date();
-    return new Date(
-      today.getFullYear() - 18,
-      today.getMonth(),
-      today.getDate()
-    )
+    return new Date(today.getFullYear() - 18, today.getMonth(), today.getDate())
       .toISOString()
       .split("T")[0];
   };
@@ -85,11 +87,15 @@ function PatientProfileContent() {
         }
 
         if (field.key === "email") {
-          schema = schema.min(1, "Email is required").email("Please enter a valid email address");
+          schema = schema
+            .min(1, "Email is required")
+            .email("Please enter a valid email address");
         }
 
         if (field.key === "password") {
-          schema = schema.min(1, "Password is required").min(8, "Password must be at least 8 characters long");
+          schema = schema
+            .min(1, "Password is required")
+            .min(8, "Password must be at least 8 characters long");
         }
 
         if (field.key === "zipCode") {
@@ -103,14 +109,13 @@ function PatientProfileContent() {
             .min(1, "Mobile number is required")
             .regex(
               /^(\+1[-.\s]?)?(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$/,
-              "Enter a valid US mobile number"
+              "Enter a valid US mobile number",
             );
         }
 
         if (field.key === "dateOfBirth") {
-          schema = schema
-            .min(1, "Date of birth is required")
-            .refine((val) => {
+          schema = schema.min(1, "Date of birth is required").refine(
+            (val) => {
               const dob = new Date(val);
               if (isNaN(dob.getTime())) return false;
 
@@ -123,9 +128,11 @@ function PatientProfileContent() {
               }
 
               return age >= 18;
-            }, {
+            },
+            {
               message: "You must be at least 18 years old",
-            });
+            },
+          );
         }
       }
 
@@ -143,15 +150,16 @@ function PatientProfileContent() {
     formState: { errors },
     setValue,
     watch,
-    control
-  } = useForm({
+    control,
+  } = useForm<Record<string, any>>({
     resolver: zodResolver(schema),
   });
 
   useEffect(() => {
     if (providerId) {
       setProviderLoading(true);
-      publicPageApi.getProviderBySlug(providerId)
+      publicPageApi
+        .getProviderBySlug(providerId)
         .then((res) => setProviderData(res.data))
         .catch(() => setProviderError(true))
         .finally(() => setProviderLoading(false));
@@ -160,7 +168,7 @@ function PatientProfileContent() {
 
   const onSubmit = async (data: any) => {
     try {
-      setFormLoading(true)
+      setFormLoading(true);
       const payload = {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -181,8 +189,14 @@ function PatientProfileContent() {
       if (res?.status === "success") {
         toast.success("Patient profile created successfully");
         sessionStorage.setItem("patiendDetail", JSON.stringify(payload));
-        sessionStorage.setItem("providerData", JSON.stringify(providerData?.suggestedProvider));
-        sessionStorage.setItem("patientToken", JSON.stringify(res?.data?.token))
+        sessionStorage.setItem(
+          "providerData",
+          JSON.stringify(providerData?.suggestedProvider),
+        );
+        sessionStorage.setItem(
+          "patientToken",
+          JSON.stringify(res?.data?.token),
+        );
         router("/appointment");
       }
     } catch (err) {
@@ -223,7 +237,9 @@ function PatientProfileContent() {
             variant="ghost"
             size="icon-sm"
             className="-ml-2"
-            onClick={() => typeof window !== "undefined" && window.history(-1)}
+            onClick={() =>
+              typeof window !== "undefined" && window.history.back()
+            }
           >
             <ArrowLeft className="h-4 w-4 text-[#4A7C7E]" />
           </Button>
@@ -235,7 +251,10 @@ function PatientProfileContent() {
               {visibleProviders.map((p: any) => {
                 const initials = `${p.firstName?.[0] || ""}${p.lastName?.[0] || ""}`;
                 return (
-                  <Avatar key={p._id} className="size-14 border border-slate-100 bg-white">
+                  <Avatar
+                    key={p._id}
+                    className="size-14 border border-slate-100 bg-white"
+                  >
                     <AvatarFallback>{initials}</AvatarFallback>
                     <AvatarImage src={p.profileImageUrl} />
                   </Avatar>
@@ -250,7 +269,8 @@ function PatientProfileContent() {
             </div>
 
             <p className="text-sm text-slate-600 max-w-xl">
-              {providerData?.pageContent?.heroTitle ?? "Over 50 Experienced Providers Specializing In ADHD Are Ready To Help"}
+              {providerData?.pageContent?.heroTitle ??
+                "Over 50 Experienced Providers Specializing In ADHD Are Ready To Help"}
             </p>
 
             <h1 className="text-xl font-semibold text-center">
@@ -258,12 +278,17 @@ function PatientProfileContent() {
             </h1>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+          >
             {fields.map((field: any) => {
               if (field.type === "boolean") {
                 return (
-                  <div key={field.key} className="flex items-start gap-2 sm:col-span-2">
-
+                  <div
+                    key={field.key}
+                    className="flex items-start gap-2 sm:col-span-2"
+                  >
                     <Controller
                       name={field.key}
                       control={control}
@@ -271,7 +296,7 @@ function PatientProfileContent() {
                       render={({ field: ctrl }) => (
                         <div className="flex items-start gap-2 sm:col-span-2">
                           <Checkbox
-                            checked={ctrl.value}
+                            checked={Boolean(ctrl.value)}
                             onCheckedChange={(v) => ctrl.onChange(!!v)}
                           />
                           <Label>{field.label}</Label>
@@ -311,7 +336,9 @@ function PatientProfileContent() {
                       }
                       max={isDOB ? getMaxDOB() : undefined}
                       {...register(field.key, {
-                        validate: isDOB ? validateDOB : undefined,
+                        validate: isDOB
+                          ? (value) => validateDOB(String(value ?? ""))
+                          : undefined,
                       })}
                     />
 
@@ -339,7 +366,11 @@ function PatientProfileContent() {
               );
             })}
 
-            <Button disabled={formLoading} type="submit" className="w-full mt-2 h-12 bg-gradient-primary sm:col-span-2">
+            <Button
+              disabled={formLoading}
+              type="submit"
+              className="w-full mt-2 h-12 bg-gradient-primary sm:col-span-2"
+            >
               Create My Patient Profile
               <ArrowRightIcon className="ml-2 h-4 w-4" />
             </Button>

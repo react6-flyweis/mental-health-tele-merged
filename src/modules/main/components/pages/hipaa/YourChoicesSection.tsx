@@ -1,5 +1,5 @@
 import { Users } from "lucide-react";
-import { HIPAASection } from "@/components/pages/HIPAASection";
+import { HIPAASection } from "@/modules/main/components/pages/HIPAASection";
 
 const choicesList = [
   {

@@ -16,14 +16,14 @@ import { useNavigate, useSearchParams, useLocation } from "react-router";
 function DashHeaderContent() {
   const { user } = useAuth();
   const router = useNavigate();
-  const pathName = useLocation();
+  const { pathname } = useLocation();
   const hidePath = [
     "/dashboard/messages",
     "/dashboard/providers",
     "/dashboard/settings",
   ];
   const [searchParams] = useSearchParams();
-  const [prevPath, setPrevPath] = useState(pathName);
+  const [prevPath, setPrevPath] = useState(pathname);
 
   const [search, setSearch] = useState(searchParams.get("q") || "");
 
@@ -42,15 +42,15 @@ function DashHeaderContent() {
     router(`?${params.toString()}`);
   };
   useEffect(() => {
-    if (prevPath !== pathName) {
+    if (prevPath !== pathname) {
       const params = new URLSearchParams(searchParams.toString());
       params.delete("q");
 
-      router(pathName);
+      router(pathname);
       setSearch("");
-      setPrevPath(pathName);
+      setPrevPath(pathname);
     }
-  }, [pathName]);
+  }, [pathname]);
   useEffect(() => {
     setSearch(searchParams.get("q") || "");
   }, [searchParams]);
@@ -59,7 +59,7 @@ function DashHeaderContent() {
       <div className="container mx-auto flex items-center justify-between gap-6 px-4 py-4">
         <div className="flex-1 flex items-center gap-4">
           <SidebarTrigger className="md:hidden" />
-          {hidePath.includes(pathName) ? null : (
+          {hidePath.includes(pathname) ? null : (
             <InputGroup className=" max-w-sm h-10 border bg-muted/70 shadow-none">
               <InputGroupAddon className="pl-4">
                 <Search className="size-4 text-muted-foreground" />

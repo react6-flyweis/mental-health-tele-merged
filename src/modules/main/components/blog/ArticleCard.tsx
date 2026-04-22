@@ -29,8 +29,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             <img
               src={article.image}
               alt={article.title}
-              fill
-              className="object-cover rounded-t-xl"
+              className="object-cover rounded-t-xl w-full h-full"
             />
           ) : null}
         </div>

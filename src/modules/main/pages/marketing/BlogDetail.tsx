@@ -20,6 +20,31 @@ import { publicPageApi } from "@/api/publicpage.api";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
+type BlogReference = {
+  label: string;
+  url: string;
+};
+
+type BlogViewData = {
+  title: string;
+  date: string;
+  authors: Array<{
+    name: string;
+    role: string;
+    title: string;
+    bio: string;
+    avatar: string;
+  }>;
+  aiSummary: string;
+  takeaways: string[];
+  references: BlogReference[];
+  ctaTitle: string;
+  ctaSubtitle: string;
+  ctaButtonLabel: string;
+  ctaButtonUrl: string;
+  ctaButtonTarget: string;
+};
+
 export default function Page() {
   const slug = useParams().slug as string;
 
@@ -83,7 +108,7 @@ export default function Page() {
       </p>
     );
 
-  const data = {
+  const data: BlogViewData = {
     title: blog?.post?.title || "",
     date: blog?.post?.publishedAt
       ? new Date(blog.post.publishedAt).toDateString()
@@ -99,7 +124,10 @@ export default function Page() {
     ],
     aiSummary: blog?.post?.excerpt || "",
     takeaways: [blog?.post?.excerpt || ""],
-    references: [],
+    references: (blog?.post?.references ?? []).map((ref: any) => ({
+      label: ref.label || ref.title || ref.url || "Reference",
+      url: ref.url || "#",
+    })),
     ctaTitle: blog?.post?.ctaTitle || "",
     ctaSubtitle: blog?.post?.ctaSubtitle || "",
     ctaButtonLabel: blog?.post?.ctaButtonLabel || "",
@@ -653,23 +681,28 @@ export default function Page() {
                   <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
                     Frequently Asked Questions
                   </h2>
-                  {faqItems.map((item, idx) => (
-                    <Accordion
-                      key={idx}
-                      type="single"
-                      collapsible
-                      className="mb-2"
-                    >
-                      <AccordionItem value={`faq-${idx}`}>
-                        <AccordionTrigger className="p-3">
-                          {item.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="p-3 pt-0">
-                          {item.answer}
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                  ))}
+                  {faqItems.map(
+                    (
+                      item: { question: string; answer: string },
+                      idx: number,
+                    ) => (
+                      <Accordion
+                        key={idx}
+                        type="single"
+                        collapsible
+                        className="mb-2"
+                      >
+                        <AccordionItem value={`faq-${idx}`}>
+                          <AccordionTrigger className="p-3">
+                            {item.question}
+                          </AccordionTrigger>
+                          <AccordionContent className="p-3 pt-0">
+                            {item.answer}
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    ),
+                  )}
                 </section>
 
                 <Card id="about-authors" className="mt-12 not-prose p-6 gap-0">
@@ -693,7 +726,7 @@ export default function Page() {
                           <AvatarFallback>
                             {a.name
                               .split(" ")
-                              .map((p) => p[0])
+                              .map((p: string) => p[0])
                               .join("")}
                           </AvatarFallback>
                         </Avatar>

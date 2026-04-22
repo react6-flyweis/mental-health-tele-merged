@@ -3,56 +3,8 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
-import {
-  Activity,
-  ChevronDown,
-  FilePenLine,
-  Globe,
-  Lock,
-  ShieldIcon,
-  Users,
-  UserX,
-  User,
-  UserCheck,
-  FileText,
-  Server,
-  AlertTriangle,
-  Copyright,
-  ExternalLink,
-  Briefcase,
-  Scale,
-  Gavel,
-} from "lucide-react";
+import { FileText } from "lucide-react";
 import PolicyContactCard from "./PolicyContactCard";
-
-import AcceptanceAndAgreement from "./privacy-sections/AcceptanceAndAgreement";
-import SitesNotForChildren from "./privacy-sections/SitesNotForChildren";
-import CreatingAnAccount from "./privacy-sections/CreatingAnAccount";
-import AccountRegistrationAndSecurity from "./privacy-sections/AccountRegistrationAndSecurity";
-import HIPAANotice from "./privacy-sections/HIPAANotice";
-import ProhibitedCountries from "./privacy-sections/ProhibitedCountries";
-import TherapyServices from "./privacy-sections/TherapyServices";
-import IndependenceOfPractitioners from "./privacy-sections/IndependenceOfPractitioners";
-import LicensedPractitioners from "./privacy-sections/LicensedPractitioners";
-import UserConduct from "./privacy-sections/UserConduct";
-import LicenseGrant from "./privacy-sections/LicenseGrant";
-import AcceptableUse from "./privacy-sections/AcceptableUse";
-import ConsentElectronic from "./privacy-sections/ConsentElectronic";
-import SecurityPrivacy from "./privacy-sections/SecurityPrivacy";
-import InformationYouProvide from "./privacy-sections/InformationYouProvide";
-import SubmissionsOfInformation from "./privacy-sections/SubmissionsOfInformation";
-import IntellectualProperty from "./privacy-sections/IntellectualProperty";
-import OperationOfTheSite from "./privacy-sections/OperationOfTheSite";
-import LimitationOfLiability from "./privacy-sections/LimitationOfLiability";
-import NoWarranty from "./privacy-sections/NoWarranty";
-import Indemnification from "./privacy-sections/Indemnification";
-import LinksToThirdPartyWebsites from "./privacy-sections/LinksToThirdPartyWebsites";
-import AffiliateDisclaimer from "./privacy-sections/AffiliateDisclaimer";
-import NoAssignment from "./privacy-sections/NoAssignment";
-import ApplicableLawEnforcement from "./privacy-sections/ApplicableLawEnforcement";
-import ArbitrationSection from "./privacy-sections/ArbitrationSection";
-import NoThirdPartyBeneficiaries from "./privacy-sections/NoThirdPartyBeneficiaries";
-import AmendmentsAndModifications from "./privacy-sections/AmendmentsAndModifications";
 
 const buildSections = (sections: any[] = []) => {
   const sorted = sections
@@ -82,7 +34,7 @@ const buildSections = (sections: any[] = []) => {
 
   return groups;
 };
-export default function PrivacyPolicyContent({ data, loading, error }: any) {
+export default function PrivacyPolicyContent({ data }: any) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const sections = buildSections(data?.sections || []);
   React.useEffect(() => {
@@ -104,7 +56,7 @@ export default function PrivacyPolicyContent({ data, loading, error }: any) {
 
     return () => observer.disconnect();
   }, []);
-  console.log({ sections })
+  console.log({ sections });
   return (
     <div className="max-w-7xl mx-auto px-4 py-16 lg:flex lg:space-x-8">
       <aside className="hidden lg:block lg:w-72 sticky top-24 h-fit">
@@ -128,7 +80,7 @@ export default function PrivacyPolicyContent({ data, loading, error }: any) {
                     {s.title}
                   </a>
                 </li>
-              )
+              );
             })}
           </ul>
         </Card>

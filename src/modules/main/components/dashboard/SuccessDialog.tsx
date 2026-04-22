@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 import checkCircleImg from "@/assets/check-circle.png";
-import { useParams, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 export default function SuccessDialog({
   children,
@@ -34,7 +34,7 @@ export default function SuccessDialog({
 
         <div className="flex flex-col items-center text-center">
           <div className="relative size-40">
-            <img src={checkCircleImg} alt="Success" fill />
+            <img src={checkCircleImg} alt="Success" />
           </div>
 
           <h2 className="text-xl font-bold mb-4">

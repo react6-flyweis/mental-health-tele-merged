@@ -26,8 +26,7 @@ export default function ContactHero() {
         <img
           src={contactBgImg}
           alt="Contact background"
-          fill
-          className="object-cover"
+          className="object-cover w-full h-full"
         />
         <div className="absolute inset-0 bg-linear-to-r from-[#3A6B7CD9] via-[#4A8591BF] to-[#4DB39CD9]" />
       </div>

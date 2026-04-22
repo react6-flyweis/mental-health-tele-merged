@@ -49,7 +49,6 @@ export default function OcdTherapy() {
                 src={evidenceImg}
                 alt="Therapist talking with patient"
                 className="w-full h-full object-cover"
-                priority={false}
               />
             </div>
           </div>

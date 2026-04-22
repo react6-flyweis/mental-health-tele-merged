@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { authApi } from "@/api/auth.api";
-import { useAuth } from "@/components/context/auth.context";
+import { useAuth } from "@/modules/main/context/auth.context";
 
 const patientRegisterSchema = z
   .object({
@@ -96,9 +96,7 @@ export default function PatientRegisterCard() {
           Start your care journey in just a few steps.
         </p>
 
-        {apiError && (
-          <p className="text-red-500 text-sm mb-4">{apiError}</p>
-        )}
+        {apiError && <p className="text-red-500 text-sm mb-4">{apiError}</p>}
 
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
           <FieldGroup className="gap-4">
@@ -127,9 +125,7 @@ export default function PatientRegisterCard() {
             </div>
 
             <Field>
-              <FieldLabel className="w-auto border-0 p-0">
-                Email
-              </FieldLabel>
+              <FieldLabel className="w-auto border-0 p-0">Email</FieldLabel>
               <Input
                 type="email"
                 placeholder="you@example.com"
@@ -173,9 +169,7 @@ export default function PatientRegisterCard() {
                   />
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                   >
                     {!showConfirmPassword ? (

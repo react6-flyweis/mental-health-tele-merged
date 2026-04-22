@@ -27,22 +27,18 @@ import {
 import { useSearchParams } from "react-router";
 
 import { useAuth } from "@/modules/main/context/auth.context";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { dashboardApi } from "@/api/dashboard.service";
 import dayjs from "dayjs";
 import { RatingStars } from "@/modules/main/components/rating";
 import { toast } from "react-toastify";
 import RequestRefillDialog from "@/modules/main/components/dashboard/RequestRefillDialog";
-import dynamic from "next/dynamic";
 import { useNavigate } from "react-router";
 import BreathingExercise from "@/modules/main/components/company/BreathingExercise";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Link } from "react-router";
 
-const VideoCall = dynamic(() => import("./video"), {
-  ssr: false,
-  loading: () => <div>Loading video session...</div>,
-});
+const VideoCall = lazy(() => import("./video"));
 
 function DashboardContent() {
   const router = useNavigate();
@@ -269,7 +265,11 @@ function DashboardContent() {
     }
   };
   if (isVideoSession) {
-    return <VideoCall connection={connection} />;
+    return (
+      <Suspense fallback={<div>Loading video session...</div>}>
+        <VideoCall connection={connection} />
+      </Suspense>
+    );
   }
   return (
     <div className="space-y-4 ">
