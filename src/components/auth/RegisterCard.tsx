@@ -35,7 +35,7 @@ export default function RegisterCard() {
         return;
       }
 
-      navigate("/provider-login", {
+      navigate("/provider/login", {
         replace: true,
         state: {
           registrationSuccess: true,
@@ -248,7 +248,7 @@ export default function RegisterCard() {
           Already have an account?{" "}
           <button
             type="button"
-            onClick={() => navigate("/provider-login")}
+            onClick={() => navigate("/provider/login")}
             className="text-[#219580] font-medium"
           >
             Login

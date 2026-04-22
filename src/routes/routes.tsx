@@ -8,9 +8,6 @@ import PublicRoute from "@/components/auth/PublicRoute";
 // import NavigateToMain from "@/components/NavigateToMain";
 import { NotFound } from "@/page/NotFound";
 
-// lazily load page components
-const SignupRolePage = lazy(() => import("@/page/SignupRolePage"));
-const PatientLoginPage = lazy(() => import("@/page/PatientLoginPage"));
 const ProviderLoginPage = lazy(() => import("@/page/ProviderLoginPage"));
 const ProviderRegisterPage = lazy(() => import("@/page/ProviderRegisterPage"));
 const DashboardPage = lazy(() => import("@/page/DashboardPage"));
@@ -33,21 +30,20 @@ export const Routes: RouteObject[] = [
   //   // element: <NavigateToMain />,
   // },
   {
+    path: "provider",
     element: <PublicRoute />,
     children: [
       {
         element: <AuthLayout />, // default path is "/"
         children: [
-          { path: "/", element: <SignupRolePage /> },
-          // { path: "/signin", element: <SignupRolePage /> },
-          { path: "patient-login", element: <PatientLoginPage /> },
-          { path: "provider-login", element: <ProviderLoginPage /> },
-          { path: "provider-register", element: <ProviderRegisterPage /> },
+          { path: "login", element: <ProviderLoginPage /> },
+          { path: "register", element: <ProviderRegisterPage /> },
         ],
       },
     ],
   },
   {
+    path: "/provider",
     element: <ProtectedRoute />,
     children: [
       {

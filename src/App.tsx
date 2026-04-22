@@ -1,10 +1,17 @@
 import { Suspense, useEffect } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  type RouteObject,
+} from "react-router";
 import { Routes } from "@/routes/routes";
 import { Loading } from "@/components/Loading";
 import { useAuthStore } from "@/store/authStore";
+import { mainRoutes } from "./modules/main/main.route";
 
-const router = createBrowserRouter(Routes);
+const AllRoutes: RouteObject[] = [...Routes, ...mainRoutes];
+
+const router = createBrowserRouter(AllRoutes);
 
 export function App() {
   const hasHydrated = useAuthStore((state) => state.hasHydrated);

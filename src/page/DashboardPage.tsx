@@ -18,7 +18,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getProviderDashboard } from "@/api/dashboard";
 
 export default function DashboardPage() {
-  const websiteURL = import.meta.env.VITE_MAIN_WEBSITE_URL;
   const provider = useAuthStore((state) => state.provider);
 
   const query = useQuery({
@@ -97,7 +96,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <Link to={websiteURL}>
+        <Link to="/">
           <Button className="bg-gradient-dash text-white hover:opacity-95">
             <ArrowLeft className="size-4" />
             Back To website

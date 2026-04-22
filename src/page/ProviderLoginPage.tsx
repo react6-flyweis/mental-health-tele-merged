@@ -1,10 +1,26 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 import bgImage from "../assets/images/bgimg.svg";
 import Logo from "../assets/images/logo.svg";
 import LoginCard from "../components/auth/LoginCard";
-import { useNavigate } from "react-router";
+import { Loading } from "@/components/Loading";
+import { useAuthStore } from "@/store/authStore";
 
 export default function ProviderLoginPage() {
   const navigate = useNavigate();
+  const token = useAuthStore((state) => state.token);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
+
+  useEffect(() => {
+    if (hasHydrated && token) {
+      navigate("/provider/dashboard", { replace: true });
+    }
+  }, [hasHydrated, token, navigate]);
+
+  if (!hasHydrated) {
+    return <Loading />;
+  }
+
   return (
     <div className="bg-[linear-gradient(180deg,#F0F9F7_0%,#E8F4F8_100%)] min-h-screen w-full">
       <div
@@ -17,7 +33,7 @@ export default function ProviderLoginPage() {
         >
           <img src={Logo} alt="Logo" className="h-[50px]" />
         </div>
-        <LoginCard role="Provider" onSubmitPath="/dashboard" useApi />
+        <LoginCard role="Provider" onSubmitPath="/provider/dashboard" useApi />
       </div>
     </div>
   );

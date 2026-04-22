@@ -15,13 +15,13 @@ export default function ProtectedRoute() {
 
   if (token && isTokenExpired(token)) {
     forceLogoutWithAlert("Your session has expired. Please log in again.");
-    return <Navigate to="/provider-login" replace />;
+    return <Navigate to="/provider/login" replace />;
   }
 
   if (!token) {
     return (
       <Navigate
-        to="/provider-login"
+        to="/provider/login"
         replace
         state={{ from: `${location.pathname}${location.search}` }}
       />

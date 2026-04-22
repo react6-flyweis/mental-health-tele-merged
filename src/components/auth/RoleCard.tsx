@@ -7,7 +7,7 @@ type Props = {
   path: string;
 };
 
-export default function RoleCard({ role }: Props) {
+export default function RoleCard({ role, path }: Props) {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
 
@@ -19,7 +19,8 @@ export default function RoleCard({ role }: Props) {
     : "Manage appointments, patients, and consultations";
 
   const handleClick = () => {
-    navigate(`/${role}-login`);
+    // navigate(`/${role}-login`);
+    navigate(path);
   };
 
   const Icon = isPatient ? Heart : Stethoscope;

@@ -11,9 +11,9 @@ export default function PublicRoute() {
     return <Loading />;
   }
 
-  if (token) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  // if (token) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   return <Outlet />;
 }

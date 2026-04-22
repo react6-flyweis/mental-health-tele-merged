@@ -26,27 +26,52 @@ import {
 import { NavLink } from "react-router";
 
 const SIDEBAR_MENU = [
-  { href: "/dashboard", icon: LayoutGrid, label: "Dashboard", isActive: true },
-  { href: "/dashboard/appointments", icon: Calendar, label: "Appointments" },
-  { href: "/dashboard/video-sessions", icon: Video, label: "Video Sessions" },
   {
-    href: "/dashboard/patient-records",
+    href: "/provider/dashboard",
+    icon: LayoutGrid,
+    label: "Dashboard",
+    isActive: true,
+  },
+  {
+    href: "/provider/dashboard/appointments",
+    icon: Calendar,
+    label: "Appointments",
+  },
+  {
+    href: "/provider/dashboard/video-sessions",
+    icon: Video,
+    label: "Video Sessions",
+  },
+  {
+    href: "/provider/dashboard/patient-records",
     icon: Search,
     label: "Patient Records",
   },
-  { href: "/dashboard/prescriptions", icon: Pill, label: "Prescriptions" },
-  { href: "/dashboard/messages", icon: MessageSquare, label: "Messages" },
-  { href: "/dashboard/earnings", icon: CreditCard, label: "Earnings" },
-  { href: "/dashboard/availability", icon: Calendar, label: "Availability" },
-  { href: "/dashboard/profile", icon: Search, label: "Profile" },
-  { href: "/dashboard/settings", icon: Settings, label: "Settings" },
+  {
+    href: "/provider/dashboard/prescriptions",
+    icon: Pill,
+    label: "Prescriptions",
+  },
+  {
+    href: "/provider/dashboard/messages",
+    icon: MessageSquare,
+    label: "Messages",
+  },
+  { href: "/provider/dashboard/earnings", icon: CreditCard, label: "Earnings" },
+  {
+    href: "/provider/dashboard/availability",
+    icon: Calendar,
+    label: "Availability",
+  },
+  { href: "/provider/dashboard/profile", icon: Search, label: "Profile" },
+  { href: "/provider/dashboard/settings", icon: Settings, label: "Settings" },
 ];
 
 export default function DashSidebar() {
   return (
     <Sidebar side="left">
       <SidebarHeader className="border-b p-3 mb-5">
-        <NavLink to="/dashboard" className="flex items-center gap-3">
+        <NavLink to="/provider/dashboard" className="flex items-center gap-3">
           <img src={logo} alt="Mental Health Tele" className="h-9 w-auto" />
         </NavLink>
       </SidebarHeader>
@@ -59,7 +84,7 @@ export default function DashSidebar() {
                 <SidebarMenuItem key={href}>
                   <NavLink
                     to={href}
-                    end={href === "/dashboard"}
+                    end={href === "/provider/dashboard"}
                     className="w-full"
                   >
                     {({ isActive }) => (

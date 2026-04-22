@@ -71,8 +71,8 @@ function redirectToProviderLogin() {
     return;
   }
 
-  if (window.location.pathname !== "/provider-login") {
-    window.location.replace("/provider-login");
+  if (window.location.pathname !== "/provider/login") {
+    window.location.replace("/provider/login");
   }
 }
 

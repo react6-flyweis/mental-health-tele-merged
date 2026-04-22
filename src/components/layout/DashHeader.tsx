@@ -9,7 +9,7 @@ import { Bell, Search } from "lucide-react";
 // store for managing the header title
 import { usePageTitleStore } from "@/store/pageTitleStore";
 import { useAuthStore } from "@/store/authStore";
-import { SidebarTrigger } from "../ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Link } from "react-router";
 
 export default function DashHeader() {

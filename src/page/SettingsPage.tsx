@@ -25,7 +25,10 @@ import UpdatePaymentMethodDialog, {
 } from "@/components/settings/UpdatePaymentMethodDialog";
 import LogoutDialog from "@/components/settings/LogoutDialog";
 import NotificationPreferencesSection from "@/components/settings/NotificationPreferencesSection";
-import { downloadProviderDataExport, getProviderPaymentAccount } from "@/api/settings";
+import {
+  downloadProviderDataExport,
+  getProviderPaymentAccount,
+} from "@/api/settings";
 import { useUpdatePasswordMutation } from "@/hooks/useNotificationPreferencesMutations";
 import { usePageTitle } from "@/store/pageTitleStore";
 import { useAuthStore } from "@/store/authStore";
@@ -198,7 +201,9 @@ export default function SettingsPage() {
       setDownloadDataSuccessMessage("Your data export has been downloaded.");
     } catch (error) {
       setDownloadDataErrorMessage(
-        error instanceof Error ? error.message : "Unable to download your data.",
+        error instanceof Error
+          ? error.message
+          : "Unable to download your data.",
       );
     } finally {
       setIsDownloadDataPending(false);
@@ -362,7 +367,9 @@ export default function SettingsPage() {
             onClick={onDownloadMyData}
             disabled={isDownloadDataPending}
           >
-            {isDownloadDataPending ? "Preparing your data..." : "Download My Data"}
+            {isDownloadDataPending
+              ? "Preparing your data..."
+              : "Download My Data"}
           </Button>
           <Button variant="outline" className="w-full justify-start h-10">
             Privacy Policy
@@ -408,7 +415,7 @@ export default function SettingsPage() {
         onConfirm={() => {
           clearAuth();
           setIsLogoutDialogOpen(false);
-          navigate("/provider-login", { replace: true });
+          navigate("/provider/login", { replace: true });
         }}
       />
     </div>
